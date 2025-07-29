@@ -1,0 +1,15 @@
+{
+    "Name": "TANKS",
+    "CameraPosition": [0, 6, -7],
+    "CameraRotation": [30, 0.0, 0.0],
+    "SunPosition": [3.3899, 10.902, -5.8255],
+    "SunRotation": [22.704, 65.875, -175.012],
+    "SunColor": [195, 184, 255],
+    "SunAmbientColor": [170, 180, 200],
+    "Cast": [
+        {
+            "Name": "LevelArt",
+            "Prefab": "LevelArt"
+        }
+    ]
+}
