@@ -21,11 +21,11 @@
             "Script": [
                 {
                     "When": ["Keyboard(D,Press)"],
-                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(RightDustTrail)"]
                 },
                 {
                     "When": ["Keyboard(A,Press)"],
-                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(LeftDustTrail)"]
                 },
                 {
                     "When": ["Keyboard(W,Press)"],
@@ -47,11 +47,11 @@
             "Script": [
                 {
                     "When": ["Keyboard(RightArrow,Press)"],
-                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(RightDustTrail)"]
                 },
                 {
                     "When": ["Keyboard(LeftArrow,Press)"],
-                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(LeftDustTrail)"]
                 },
                 {
                     "When": ["Keyboard(UpArrow,Press)"],
