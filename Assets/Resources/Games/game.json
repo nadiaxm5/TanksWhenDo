@@ -4,12 +4,13 @@
     "CameraRotation": [50, 60, 0],
     "SunPosition": [0, 10, 0],
     "SunRotation": [54.3, -26.2, 10.5],
-    "SunColor": [255, 238, 182],
-    "SunAmbientColor": [170, 180, 200],
+    "SunColor": [255, 200, 100],
+    "SunAmbientColor": [180, 180, 180],
     "Cast": [
         {
             "Name": "LevelArt",
-            "Prefab": "LevelArt"
+            "Prefab": "LevelArt",
+            "Tag":"Obstacle"
         },
         {
             "Name": "BlueTank",
@@ -60,6 +61,62 @@
                 {
                     "When": ["Keyboard(DownArrow,Press)"],
                     "Do": ["Move(this.ry+180,this.speed)"]
+                }
+            ]
+        },
+        {
+            "Name": "Shell",
+            "Prefab": "Shell",
+            "Tag":"Bullet",
+            "Active": false,
+            "Properties": ["speed=10", "damage=5"],
+            "Script": [
+                {
+                    "Do": ["Move(this.ry,this.speed)"]
+                },
+                {
+                    "When": ["Collision(PlayerBlue)"],
+                    "Do": ["Delete(this)"]
+                },
+                {
+                    "When": ["Collision(PlayerRed)"],
+                    "Do": ["Delete(this)"]
+                },
+                {
+                    "When": ["Collision(Obstacle)"],
+                    "Do": ["Delete(this)"]
+                }
+            ]
+        },
+        {
+            "Name": "BlueBulletSpawner",
+            "Prefab": "BlueBulletSpawner",
+            "Position": [-3.0, 0.0, 30.0],
+            "Rotation": [0.0, 180.0, 0.0],
+            "Properties": ["despX=0.0", "despY=1.7", "despZ=1.35"],
+            "Script": [
+                {
+                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry"]
+                },
+                {
+                    "When": ["Keyboard(Space,Press)"],
+                    "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)"]
+                }
+            ]
+        },
+        {
+            "Name": "RedBulletSpawner",
+            "Prefab": "RedBulletSpawner",
+            "Position": [-3.0, 0.0, 30.0],
+            "Rotation": [0.0, 180.0, 0.0],
+            "Properties": ["despX=0.0", "despY=1.7", "despZ=1.35"],
+            "Script": [
+                {
+                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry"]
+                },
+                {
+                    "When": ["Keyboard(Return,Press)"],
+                    "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)"]
                 }
             ]
         }

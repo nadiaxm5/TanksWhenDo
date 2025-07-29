@@ -1,0 +1,52 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class Shell : MonoBehaviour {
+    public bool Active = false;
+    public float speed=10f;
+    public float damage=5f;
+    public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    void FixedUpdate(){
+        {
+                Action.Move("this.ry","this.speed",gameObject,scopeList);
+        }
+        if(Condition.Collision("PlayerBlue",gameObject)){
+                Action.Delete(gameObject);
+        }
+        if(Condition.Collision("PlayerRed",gameObject)){
+                Action.Delete(gameObject);
+        }
+        if(Condition.Collision("Obstacle",gameObject)){
+                Action.Delete(gameObject);
+        }
+    }
+    public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
+    void Start() {
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.ry,this.speed)");
+        if (Active) gameObject.SetActive(true);
+        else gameObject.SetActive(false);
+    }
+    public Dictionary<string, HashSet<GameObject>> TagCollisions = new Dictionary<string, HashSet<GameObject>>();
+    void OnTriggerEnter(Collider other) {
+        if (TagCollisions.ContainsKey(other.tag))
+            TagCollisions[other.tag].Add(other.gameObject);
+    }
+    void OnTriggerExit(Collider other) {
+        if (TagCollisions.ContainsKey(other.tag))
+            TagCollisions[other.tag].Remove(other.gameObject);
+    }
+    void Awake() {
+        propertyList = Utils.CreateProperties("speed=10;damage=5");
+        TagCollisions["Untagged"] = new HashSet<GameObject>();
+        TagCollisions["Respawn"] = new HashSet<GameObject>();
+        TagCollisions["Finish"] = new HashSet<GameObject>();
+        TagCollisions["EditorOnly"] = new HashSet<GameObject>();
+        TagCollisions["MainCamera"] = new HashSet<GameObject>();
+        TagCollisions["Player"] = new HashSet<GameObject>();
+        TagCollisions["GameController"] = new HashSet<GameObject>();
+        TagCollisions["Obstacle"] = new HashSet<GameObject>();
+        TagCollisions["PlayerBlue"] = new HashSet<GameObject>();
+        TagCollisions["PlayerRed"] = new HashSet<GameObject>();
+        TagCollisions["Bullet"] = new HashSet<GameObject>();
+    }
+}
