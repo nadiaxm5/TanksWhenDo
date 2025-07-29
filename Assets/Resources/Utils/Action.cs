@@ -181,6 +181,27 @@ public static class Action
         Object.Destroy(me);
     }
 
+    public static void Rotate(string angleExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber(); // grados por segundo
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber();
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber();
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber();
+
+        Vector3 pivot = new Vector3(rx, ry, rz);
+        float angleDelta = angleSpeed * Time.deltaTime;
+
+        // Rotación alrededor del eje Y (plano horizontal)
+        obj.transform.RotateAround(pivot, Vector3.up, angleDelta);
+
+        // Guardamos la rotación actual en ry
+        Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
+    }
+
     public static void RotateTo(string xExp, string yExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();

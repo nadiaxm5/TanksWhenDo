@@ -1,15 +1,67 @@
 {
     "Name": "TANKS",
-    "CameraPosition": [0, 6, -7],
-    "CameraRotation": [30, 0.0, 0.0],
-    "SunPosition": [3.3899, 10.902, -5.8255],
-    "SunRotation": [22.704, 65.875, -175.012],
-    "SunColor": [195, 184, 255],
+    "CameraPosition": [-12, 20, 5],
+    "CameraRotation": [50, 60, 0],
+    "SunPosition": [0, 10, 0],
+    "SunRotation": [54.3, -26.2, 10.5],
+    "SunColor": [255, 238, 182],
     "SunAmbientColor": [170, 180, 200],
     "Cast": [
         {
             "Name": "LevelArt",
             "Prefab": "LevelArt"
+        },
+        {
+            "Name": "BlueTank",
+            "Prefab": "BlueTank",
+            "Tag":"PlayerBlue",
+            "Position": [-3.0, 0.0, 30.0],
+            "Rotation": [0.0, 180.0, 0.0],
+            "Properties": ["speed=5", "angularSpeed=90"],
+            "Script": [
+                {
+                    "When": ["Keyboard(D,Press)"],
+                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)"]
+                },
+                {
+                    "When": ["Keyboard(A,Press)"],
+                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)"]
+                },
+                {
+                    "When": ["Keyboard(W,Press)"],
+                    "Do": ["Move(this.ry,this.speed)"]
+                },
+                {
+                    "When": ["Keyboard(S,Press)"],
+                    "Do": ["Move(this.ry+180,this.speed)"]
+                }
+            ]
+        },
+        {
+            "Name": "RedTank",
+            "Prefab": "RedTank",
+            "Tag":"PlayerRed",
+            "Position": [13.0, 0.0, -5.0],
+            "Rotation": [0.0, 0.0, 0.0],
+            "Properties": ["speed=5", "angularSpeed=90"],
+            "Script": [
+                {
+                    "When": ["Keyboard(RightArrow,Press)"],
+                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)"]
+                },
+                {
+                    "When": ["Keyboard(LeftArrow,Press)"],
+                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)"]
+                },
+                {
+                    "When": ["Keyboard(UpArrow,Press)"],
+                    "Do": ["Move(this.ry,this.speed)"]
+                },
+                {
+                    "When": ["Keyboard(DownArrow,Press)"],
+                    "Do": ["Move(this.ry+180,this.speed)"]
+                }
+            ]
         }
     ]
 }
