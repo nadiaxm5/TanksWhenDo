@@ -14,7 +14,7 @@ public class BlueBulletSpawner : MonoBehaviour {
                 Action.Edit("this.z","BlueTank.z",scopeList);
                 Action.Edit("this.ry","BlueTank.ry",scopeList);
         }
-        if(Condition.Keyboard("Space","Press")){
+        if(Condition.Keyboard("Space","Down")){
                 Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
         }
     }

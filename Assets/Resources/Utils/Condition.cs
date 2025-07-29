@@ -48,6 +48,8 @@ public static class Condition
         switch (type)
         {
             case "Press": return Input.GetMouseButton(0);
+            case "Down": return Input.GetMouseButtonDown(0);
+            case "Up": return Input.GetMouseButtonUp(0);
             case "Toggle":
                 {
                     if (Input.GetMouseButton(0))

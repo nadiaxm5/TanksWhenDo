@@ -99,7 +99,7 @@
                     "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry"]
                 },
                 {
-                    "When": ["Keyboard(Space,Press)"],
+                    "When": ["Keyboard(Space,Down)"],
                     "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)"]
                 }
             ]
@@ -115,7 +115,7 @@
                     "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry"]
                 },
                 {
-                    "When": ["Keyboard(Return,Press)"],
+                    "When": ["Keyboard(Return,Down)"],
                     "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)"]
                 }
             ]

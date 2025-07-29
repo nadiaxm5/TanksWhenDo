@@ -14,7 +14,7 @@ public class RedBulletSpawner : MonoBehaviour {
                 Action.Edit("this.z","RedTank.z",scopeList);
                 Action.Edit("this.ry","RedTank.ry",scopeList);
         }
-        if(Condition.Keyboard("Return","Press")){
+        if(Condition.Keyboard("Return","Down")){
                 Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
         }
     }
