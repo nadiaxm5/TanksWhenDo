@@ -9,13 +9,15 @@ public class RedBulletSpawner : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-                Action.Edit("this.x","RedTank.x",scopeList);
-                Action.Edit("this.y","RedTank.y",scopeList);
-                Action.Edit("this.z","RedTank.z",scopeList);
-                Action.Edit("this.ry","RedTank.ry",scopeList);
+            Action.Edit("this.x","RedTank.x",scopeList);
+            Action.Edit("this.y","RedTank.y",scopeList);
+            Action.Edit("this.z","RedTank.z",scopeList);
+            Action.Edit("this.ry","RedTank.ry",scopeList);
         }
+    }
+    void Update(){
         if(Condition.Keyboard("Return","Down")){
-                Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
+            Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();

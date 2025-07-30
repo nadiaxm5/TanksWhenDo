@@ -45,47 +45,112 @@ public static class Scripts
             if (joinProperties.Length > 0)
                 outfile.WriteLine("    public Dictionary<string, float> propertyList = new Dictionary<string, float>();");
 
-            // FixedUpdate
-            outfile.WriteLine("    void FixedUpdate(){");
+            // Separar sentencias en Update y FixedUpdate
+            List<SentenceJson> updateSentences = new List<SentenceJson>();
+            List<SentenceJson> fixedSentences = new List<SentenceJson>();
+
             foreach (SentenceJson s in actor.Script)
             {
-                if (s.When.Any())
-                {
-                    outfile.Write("        if(");
-                    foreach (string c in s.When)
-                    {
-                        string newC = c;
-                        if (c.Contains("Collision")) hasCollision = true; //Editado
-                        else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
-                        else if (!c.Contains("Keyboard"))
-                        { // if not a Keyboard condition is a Compare condition
-                            scope.Add(c);
-                            newC = "Compare(" + c + ")";
-                        }
-                        outfile.Write("Condition." + StringToCommand(newC));
-                        if (s.When.Last() != c) outfile.Write(" && ");
-                    }
-                    outfile.WriteLine("){");
-                }
-                else outfile.WriteLine("        {");
-
-                foreach (string a in s.Do)
-                {
-                    string newA = a;
-                    if (a.Contains("="))
-                    {
-                        var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
-                        newA = "Edit(" + elements[0] + "," + elements[1] + ")";
-                        scope.Add(newA);
-                    }
-                    else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
-                    else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
-
-                    outfile.WriteLine("                Action." + StringToCommand(newA) + ";");
-                }
-                outfile.WriteLine("        }");
+                bool isUpdate = s.When.Any(w => w.Contains("Keyboard") || w.Contains("Touch"));
+                if (isUpdate) updateSentences.Add(s);
+                else fixedSentences.Add(s);
             }
-            outfile.WriteLine("    }");
+
+            // FixedUpdate
+            if (fixedSentences.Any())
+            {
+                outfile.WriteLine("    void FixedUpdate(){");
+                foreach (SentenceJson s in fixedSentences)
+                {
+                    if (s.When.Any())
+                    {
+                        outfile.Write("        if(");
+                        foreach (string c in s.When)
+                        {
+                            string newC = c;
+                            if (c.Contains("Collision")) hasCollision = true;
+                            else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
+                            else if (!c.Contains("Keyboard"))
+                            {
+                                scope.Add(c);
+                                newC = "Compare(" + c + ")";
+                            }
+                            outfile.Write("Condition." + StringToCommand(newC));
+                            if (s.When.Last() != c) outfile.Write(" && ");
+                        }
+                        outfile.WriteLine("){");
+                    }
+                    else
+                    {
+                        outfile.WriteLine("        {");
+                    }
+
+                    foreach (string a in s.Do)
+                    {
+                        string newA = a;
+                        if (a.Contains("="))
+                        {
+                            var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
+                            newA = "Edit(" + elements[0] + "," + elements[1] + ")";
+                            scope.Add(newA);
+                        }
+                        else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
+                        else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
+
+                        outfile.WriteLine("            Action." + StringToCommand(newA) + ";");
+                    }
+                    outfile.WriteLine("        }");
+                }
+                outfile.WriteLine("    }");
+            }
+
+            // Update
+            if (updateSentences.Any())
+            {
+                outfile.WriteLine("    void Update(){");
+                foreach (SentenceJson s in updateSentences)
+                {
+                    if (s.When.Any())
+                    {
+                        outfile.Write("        if(");
+                        foreach (string c in s.When)
+                        {
+                            string newC = c;
+                            if (c.Contains("Collision")) hasCollision = true;
+                            else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
+                            else if (!c.Contains("Keyboard"))
+                            {
+                                scope.Add(c);
+                                newC = "Compare(" + c + ")";
+                            }
+                            outfile.Write("Condition." + StringToCommand(newC));
+                            if (s.When.Last() != c) outfile.Write(" && ");
+                        }
+                        outfile.WriteLine("){");
+                    }
+                    else
+                    {
+                        outfile.WriteLine("        {");
+                    }
+
+                    foreach (string a in s.Do)
+                    {
+                        string newA = a;
+                        if (a.Contains("="))
+                        {
+                            var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
+                            newA = "Edit(" + elements[0] + "," + elements[1] + ")";
+                            scope.Add(newA);
+                        }
+                        else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
+                        else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
+
+                        outfile.WriteLine("            Action." + StringToCommand(newA) + ";");
+                    }
+                    outfile.WriteLine("        }");
+                }
+                outfile.WriteLine("    }");
+            }
 
             // Awake (acumulador)
             List<string> awakeLines = new List<string>();

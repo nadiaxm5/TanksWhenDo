@@ -8,16 +8,16 @@ public class Shell : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-                Action.Move("this.ry","this.speed",gameObject,scopeList);
+            Action.Move("this.ry","this.speed",gameObject,scopeList);
         }
         if(Condition.Collision("PlayerBlue",gameObject)){
-                Action.Delete(gameObject);
+            Action.Delete(gameObject);
         }
         if(Condition.Collision("PlayerRed",gameObject)){
-                Action.Delete(gameObject);
+            Action.Delete(gameObject);
         }
         if(Condition.Collision("Obstacle",gameObject)){
-                Action.Delete(gameObject);
+            Action.Delete(gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();

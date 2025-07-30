@@ -9,13 +9,15 @@ public class BlueBulletSpawner : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-                Action.Edit("this.x","BlueTank.x",scopeList);
-                Action.Edit("this.y","BlueTank.y",scopeList);
-                Action.Edit("this.z","BlueTank.z",scopeList);
-                Action.Edit("this.ry","BlueTank.ry",scopeList);
+            Action.Edit("this.x","BlueTank.x",scopeList);
+            Action.Edit("this.y","BlueTank.y",scopeList);
+            Action.Edit("this.z","BlueTank.z",scopeList);
+            Action.Edit("this.ry","BlueTank.ry",scopeList);
         }
+    }
+    void Update(){
         if(Condition.Keyboard("Space","Down")){
-                Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
+            Action.Spawn("Shell", gameObject, "this.despX", "this.despY", "this.despZ", "0", scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
