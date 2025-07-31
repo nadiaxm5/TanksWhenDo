@@ -38,7 +38,7 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["this.health=this.health-50"]
+                    "Do": ["this.health=this.health-Shell.damage"]
                 }
             ]
         },
@@ -68,7 +68,7 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["this.health=this.health-50"]
+                    "Do": ["this.health=this.health-Shell.damage"]
                 }
             ]
         },
@@ -77,7 +77,7 @@
             "Prefab": "Shell",
             "Tag":"Shell",
             "Active": false,
-            "Properties": ["speed=10", "damage=5"],
+            "Properties": ["speed=15", "damage=50"],
             "Script": [
                 {
                     "Do": ["Move(this.ry,this.speed)"]
@@ -168,12 +168,32 @@
                 }
             ]
         },
-                {
+        {
             "Name": "RedAim",
             "Prefab": "RedAim",
             "Script": [
                 {
                     "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedBulletSpawner.currentAim"]
+                }
+            ]
+        },
+        {
+            "Name": "RedHealth",
+            "Prefab": "RedHealth",
+            "Properties": ["despY=0.05"],
+            "Script": [
+                {
+                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y+this.despY", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedTank.health"]
+                }
+            ]
+        },
+        {
+            "Name": "BlueHealth",
+            "Prefab": "BlueHealth",
+            "Properties": ["despY=0.05"],
+            "Script": [
+                {
+                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y+this.despY", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueTank.health"]
                 }
             ]
         }
