@@ -125,14 +125,48 @@ public static class Action
     {
         AudioSource[] audios = obj.GetComponents<AudioSource>();
         foreach (AudioSource audio in audios)
-            if (audio.clip.name == audioClip && !audio.isPlaying) audio.Play();
+        {
+            if (audio.clip != null && audio.clip.name == audioClip && !audio.isPlaying)
+            {
+                audio.Play();
+                return;
+            }
+        }
+
+        AudioSource[] childAudios = obj.GetComponentsInChildren<AudioSource>();
+        foreach (AudioSource audio in childAudios)
+        {
+            if (audio.gameObject == obj) continue;
+            if (audio.clip != null && audio.clip.name == audioClip && !audio.isPlaying)
+            {
+                audio.Play();
+                return;
+            }
+        }
     }
 
     public static void StopSound(string audioClip, GameObject obj)
     {
         AudioSource[] audios = obj.GetComponents<AudioSource>();
         foreach (AudioSource audio in audios)
-            if (audio.clip.name == audioClip) audio.Stop();
+        {
+            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
+            {
+                audio.Stop();
+                return;
+            }
+        }
+
+        AudioSource[] childAudios = obj.GetComponentsInChildren<AudioSource>();
+        foreach (AudioSource audio in childAudios)
+        {
+            if (audio.gameObject == obj) continue;
+            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
+            {
+                audio.Stop();
+                return;
+            }
+        }
     }
 
     public static void PlayParticles(string particleSystemName, GameObject obj)

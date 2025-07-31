@@ -10,13 +10,16 @@ public class Shell : MonoBehaviour {
         {
             Action.Move("this.ry","this.speed",gameObject,scopeList);
         }
-        if(Condition.Collision("PlayerBlue",gameObject)){
+        if(Condition.Collision("BlueTank",gameObject)){
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
-        if(Condition.Collision("PlayerRed",gameObject)){
+        if(Condition.Collision("RedTank",gameObject)){
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
         if(Condition.Collision("Obstacle",gameObject)){
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
     }
@@ -45,8 +48,8 @@ public class Shell : MonoBehaviour {
         TagCollisions["Player"] = new HashSet<GameObject>();
         TagCollisions["GameController"] = new HashSet<GameObject>();
         TagCollisions["Obstacle"] = new HashSet<GameObject>();
-        TagCollisions["PlayerBlue"] = new HashSet<GameObject>();
-        TagCollisions["PlayerRed"] = new HashSet<GameObject>();
-        TagCollisions["Bullet"] = new HashSet<GameObject>();
+        TagCollisions["BlueTank"] = new HashSet<GameObject>();
+        TagCollisions["RedTank"] = new HashSet<GameObject>();
+        TagCollisions["Shell"] = new HashSet<GameObject>();
     }
 }

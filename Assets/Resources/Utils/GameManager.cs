@@ -14,9 +14,11 @@ public class GameManager : MonoBehaviour
 
     public Camera MainCamera => mainCamera;
     public Light SunLight => sunLight;
+
     public float MouseScreenX => mouseScreenPosition.x;
     public float MouseScreenY => mouseScreenPosition.y;
     public float MouseScreenZ => mouseScreenPosition.z;
+
     public float MouseWorldX => mouseWorldPosition.x;
     public float MouseWorldY => mouseWorldPosition.y;
     public float MouseWorldZ => mouseWorldPosition.z;
