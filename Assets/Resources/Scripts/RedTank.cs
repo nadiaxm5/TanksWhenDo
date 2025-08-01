@@ -9,7 +9,10 @@ public class RedTank : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         if(Condition.Collision("Shell",gameObject)){
-            Action.Edit("this.health","this.health-50",scopeList);
+            Action.Edit("this.health","this.health-Shell.damage",scopeList);
+        }
+        if(Condition.Compare("this.health<=0",scopeList)){
+            Action.Edit("BlueWin.Active","1",scopeList);
         }
     }
     void Update(){
@@ -30,7 +33,7 @@ public class RedTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-50);Move(this.ry,this.speed);Move(this.ry+180,this.speed)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(BlueWin.Active,1);Move(this.ry,this.speed);Move(this.ry+180,this.speed)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

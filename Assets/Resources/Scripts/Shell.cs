@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class Shell : MonoBehaviour {
     public bool Active = false;
-    public float speed=10f;
-    public float damage=5f;
+    public float speed=15f;
+    public float damage=50f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
@@ -39,7 +39,7 @@ public class Shell : MonoBehaviour {
             TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("speed=10;damage=5");
+        propertyList = Utils.CreateProperties("speed=15;damage=50");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();

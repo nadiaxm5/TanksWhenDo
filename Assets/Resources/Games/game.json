@@ -39,6 +39,10 @@
                 {
                     "When": ["Collision(Shell)"],
                     "Do": ["this.health=this.health-Shell.damage"]
+                },
+                {
+                    "When": ["this.health<=0"],
+                    "Do": ["RedWin.Active=1"]
                 }
             ]
         },
@@ -69,6 +73,10 @@
                 {
                     "When": ["Collision(Shell)"],
                     "Do": ["this.health=this.health-Shell.damage"]
+                },
+                {
+                    "When": ["this.health<=0"],
+                    "Do": ["BlueWin.Active=1"]
                 }
             ]
         },
@@ -194,6 +202,36 @@
             "Script": [
                 {
                     "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y+this.despY", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueTank.health"]
+                }
+            ]
+        },
+        {
+            "Name": "BlueWin",
+            "Prefab": "BlueWin",
+            "Active": false,
+            "Properties":["counter=0"],
+            "Script": [
+                {
+                    "Do":["this.counter=this.counter+1"]
+                },
+                {
+                    "When":["this.counter==150"],
+                    "Do":["LoadScene()"]
+                }
+            ]
+        },
+        {
+            "Name": "RedWin",
+            "Prefab": "RedWin",
+            "Active": false,
+            "Properties":["counter=0"],
+            "Script": [
+                {
+                    "Do":["this.counter=this.counter+1"]
+                },
+                {
+                    "When":["this.counter==150"],
+                    "Do":["LoadScene()"]
                 }
             ]
         }
