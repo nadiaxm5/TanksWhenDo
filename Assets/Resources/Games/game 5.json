@@ -234,20 +234,6 @@
                     "Do":["LoadScene()"]
                 }
             ]
-        },
-        {
-            "Name":"CameraManager",
-            "Prefab":"CameraManager",
-            "Properties":["despX=15", "despY=15", "despZ=10"],
-            "Script": [
-                {
-                    "Do":[
-                            "Camera.x=(BlueTank.x+RedTank.x)/2 - this.despX",
-                            "Camera.y=this.despY + (abs(BlueTank.x-RedTank.x)+abs(BlueTank.z-RedTank.z))/3",
-                            "Camera.z=(BlueTank.z+RedTank.z)/2 - this.despZ"
-                    ]
-                }
-            ]
         }
     ]
 }
