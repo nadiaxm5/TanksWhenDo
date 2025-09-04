@@ -18,23 +18,23 @@
             "Tag":"BlueTank",
             "Position": [-3.0, 0.0, 30.0],
             "Rotation": [0.0, 180.0, 0.0],
-            "Properties": ["speed=10", "angularSpeed=90", "health=100"],
+            "Properties": ["speed=10", "angularSpeed=90", "health=100", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
             "Script": [
                 {
                     "When": ["Keyboard(D,Press)"],
-                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(this.angularSpeed,this.rx,this.ry,this.rz)", "PlayParticles(DustTrail)"]
                 },
                 {
                     "When": ["Keyboard(A,Press)"],
-                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(-this.angularSpeed,this.rx,this.ry,this.rz)", "PlayParticles(DustTrail)"]
                 },
                 {
                     "When": ["Keyboard(W,Press)"],
-                    "Do": ["Move(this.ry,this.speed)"]
+                    "Do": ["Move(this.speed,0,this.ry,0)"]
                 },
                 {
                     "When": ["Keyboard(S,Press)"],
-                    "Do": ["Move(this.ry+180,this.speed)"]
+                    "Do": ["Move(this.speed,0,this.ry+180,0)"]
                 },
                 {
                     "When": ["Collision(Shell)"],
@@ -43,6 +43,18 @@
                 {
                     "When": ["this.health<=0"],
                     "Do": ["RedWin.Active=1"]
+                },
+                {
+                    "When": ["Keyboard(Space,Press)"],
+                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
+                },
+                {
+                    "When": ["this.currentAim>=this.maxAim"],
+                    "Do": ["this.currentAim=this.maxAim"]
+                },
+                {
+                    "When": ["Keyboard(Space,Up)"],
+                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "this.currentAim=0", "PlaySound(ShotFiring)"]
                 }
             ]
         },
@@ -52,23 +64,23 @@
             "Tag":"RedTank",
             "Position": [13.0, 0.0, -5.0],
             "Rotation": [0.0, 0.0, 0.0],
-            "Properties": ["speed=10", "angularSpeed=90", "health=100"],
+            "Properties": ["speed=10", "angularSpeed=90", "health=100", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
             "Script": [
                 {
                     "When": ["Keyboard(RightArrow,Press)"],
-                    "Do": ["Rotate(this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(this.angularSpeed,this.rx,this.ry,this.rz)", "PlayParticles(DustTrail)"]
                 },
                 {
                     "When": ["Keyboard(LeftArrow,Press)"],
-                    "Do": ["Rotate(-this.angularSpeed, this.x, this.y, this.z)", "PlayParticles(DustTrail)"]
+                    "Do": ["Rotate(-this.angularSpeed,this.rx,this.ry,this.rz)", "PlayParticles(DustTrail)"]
                 },
                 {
                     "When": ["Keyboard(UpArrow,Press)"],
-                    "Do": ["Move(this.ry,this.speed)"]
+                    "Do": ["Move(this.speed,0,this.ry,0)"]
                 },
                 {
                     "When": ["Keyboard(DownArrow,Press)"],
-                    "Do": ["Move(this.ry+180,this.speed)"]
+                    "Do": ["Move(this.speed,0,this.ry+180,0)"]
                 },
                 {
                     "When": ["Collision(Shell)"],
@@ -77,6 +89,18 @@
                 {
                     "When": ["this.health<=0"],
                     "Do": ["BlueWin.Active=1"]
+                },
+                {
+                    "When": ["Keyboard(Return,Press)"],
+                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
+                },
+                {
+                    "When": ["this.currentAim>=this.maxAim"],
+                    "Do": ["this.currentAim=this.maxAim"]
+                },
+                {
+                    "When": ["Keyboard(Return,Up)"],
+                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "this.currentAim=0", "PlaySound(ShotFiring)"]
                 }
             ]
         },
@@ -88,7 +112,7 @@
             "Properties": ["speed=15", "damage=50"],
             "Script": [
                 {
-                    "Do": ["Move(this.ry,this.speed)"]
+                    "Do": ["Move(this.speed,0,this.ry,0)"]
                 },
                 {
                     "When": ["Collision(BlueTank)"],
@@ -120,59 +144,11 @@
             ]
         },
         {
-            "Name": "BlueBulletSpawner",
-            "Prefab": "BlueBulletSpawner",
-            "Position": [-3.0, 0.0, 30.0],
-            "Rotation": [0.0, 180.0, 0.0],
-            "Properties": ["despX=0.0", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
-            "Script": [
-                {
-                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry"]
-                },
-                {
-                    "When": ["Keyboard(Space,Press)"],
-                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
-                },
-                {
-                    "When": ["this.currentAim>=this.maxAim"],
-                    "Do": ["this.currentAim=this.maxAim"]
-                },
-                {
-                    "When": ["Keyboard(Space,Up)"],
-                    "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)", "this.currentAim=0", "StopSound(ShotCharging)", "PlaySound(ShotFiring)"]
-                }
-            ]
-        },
-        {
-            "Name": "RedBulletSpawner",
-            "Prefab": "RedBulletSpawner",
-            "Position": [-3.0, 0.0, 30.0],
-            "Rotation": [0.0, 180.0, 0.0],
-            "Properties": ["despX=0.0", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
-            "Script": [
-                {
-                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry"]
-                },
-                {
-                    "When": ["Keyboard(Return,Press)"],
-                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
-                },
-                {
-                    "When": ["this.currentAim>=this.maxAim"],
-                    "Do": ["this.currentAim=this.maxAim"]
-                },
-                {
-                    "When": ["Keyboard(Return,Up)"],
-                    "Do": ["Spawn(Shell, this, this.despX, this.despY, this.despZ)", "this.currentAim=0", "StopSound(ShotCharging)", "PlaySound(ShotFiring)"]
-                }
-            ]
-        },
-        {
             "Name": "BlueAim",
             "Prefab": "BlueAim",
             "Script": [
                 {
-                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueBulletSpawner.currentAim"]
+                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueTank.currentAim"]
                 }
             ]
         },
@@ -181,7 +157,7 @@
             "Prefab": "RedAim",
             "Script": [
                 {
-                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedBulletSpawner.currentAim"]
+                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedTank.currentAim"]
                 }
             ]
         },

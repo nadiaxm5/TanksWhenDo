@@ -9,12 +9,12 @@ public class BlueAim : MonoBehaviour {
             Action.Edit("this.y","BlueTank.y",scopeList);
             Action.Edit("this.z","BlueTank.z",scopeList);
             Action.Edit("this.ry","BlueTank.ry",scopeList);
-            Action.Edit("this.value","BlueBulletSpawner.currentAim",scopeList);
+            Action.Edit("this.value","BlueTank.currentAim",scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.x,BlueTank.x);Edit(this.y,BlueTank.y);Edit(this.z,BlueTank.z);Edit(this.ry,BlueTank.ry);Edit(this.value,BlueBulletSpawner.currentAim)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.x,BlueTank.x);Edit(this.y,BlueTank.y);Edit(this.z,BlueTank.z);Edit(this.ry,BlueTank.ry);Edit(this.value,BlueTank.currentAim)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

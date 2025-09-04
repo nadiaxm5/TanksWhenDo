@@ -6,6 +6,10 @@ public class BlueTank : MonoBehaviour {
     public float speed=10f;
     public float angularSpeed=90f;
     public float health=100f;
+    public float despY=1.7f;
+    public float despZ=1.35f;
+    public float maxAim=200f;
+    public float currentAim=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         if(Condition.Collision("Shell",gameObject)){
@@ -14,26 +18,38 @@ public class BlueTank : MonoBehaviour {
         if(Condition.Compare("this.health<=0",scopeList)){
             Action.Edit("RedWin.Active","1",scopeList);
         }
+        if(Condition.Compare("this.currentAim>=this.maxAim",scopeList)){
+            Action.Edit("this.currentAim","this.maxAim",scopeList);
+        }
     }
     void Update(){
         if(Condition.Keyboard("D","Press")){
-            Action.Rotate("this.angularSpeed"," this.x"," this.y"," this.z",gameObject,scopeList);
+            Action.Rotate("this.angularSpeed","this.rx","this.ry","this.rz",gameObject,scopeList);
             Action.PlayParticles("DustTrail",gameObject);
         }
         if(Condition.Keyboard("A","Press")){
-            Action.Rotate("-this.angularSpeed"," this.x"," this.y"," this.z",gameObject,scopeList);
+            Action.Rotate("-this.angularSpeed","this.rx","this.ry","this.rz",gameObject,scopeList);
             Action.PlayParticles("DustTrail",gameObject);
         }
         if(Condition.Keyboard("W","Press")){
-            Action.Move("this.ry","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","this.ry","0",gameObject,scopeList);
         }
         if(Condition.Keyboard("S","Press")){
-            Action.Move("this.ry+180","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","this.ry+180","0",gameObject,scopeList);
+        }
+        if(Condition.Keyboard("Space","Press")){
+            Action.Edit("this.currentAim","this.currentAim+1",scopeList);
+            Action.PlaySound("ShotCharging",gameObject);
+        }
+        if(Condition.Keyboard("Space","Up")){
+            Action.Spawn("Shell", gameObject, "0", "this.despY", "this.despZ", "0", scopeList);
+            Action.Edit("this.currentAim","0",scopeList);
+            Action.PlaySound("ShotFiring",gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(RedWin.Active,1);Move(this.ry,this.speed);Move(this.ry+180,this.speed)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(RedWin.Active,1);this.currentAim>=this.maxAim;Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
@@ -47,7 +63,7 @@ public class BlueTank : MonoBehaviour {
             TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("speed=10;angularSpeed=90;health=100");
+        propertyList = Utils.CreateProperties("speed=10;angularSpeed=90;health=100;despY=1.7;despZ=1.35;maxAim=200;currentAim=0");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();

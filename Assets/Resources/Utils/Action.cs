@@ -74,15 +74,25 @@ public static class Action
         obj.GetComponent<Animator>().SetInteger("State", int.Parse(state));
     }
 
-    public static void Move(string angleExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    public static void Move(string speedExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (KeyValuePair<string, GameObject> s in scopeList)
             parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
-        float angle = (float)parser.ParseNumber(angleExp).GetNumber() * Mathf.Deg2Rad;
         float speed = (float)parser.ParseNumber(speedExp).GetNumber();
-        Utils.SetProperty("this.x", obj.transform.position.x + speed * Mathf.Sin(angle) * Time.deltaTime, obj);
-        Utils.SetProperty("this.z", obj.transform.position.z + speed * Mathf.Cos(angle) * Time.deltaTime, obj);
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber();
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber();
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber();
+
+        Vector3 dir = Quaternion.Euler(rx, ry, rz) * Vector3.forward;
+
+        if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
+
+        Vector3 delta = dir * speed * Time.deltaTime;
+
+        Utils.SetProperty("this.x", obj.transform.position.x + delta.x, obj);
+        Utils.SetProperty("this.y", obj.transform.position.y + delta.y, obj);
+        Utils.SetProperty("this.z", obj.transform.position.z + delta.z, obj);
     }
 
     public static void MoveTo(string xExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
@@ -220,20 +230,20 @@ public static class Action
         Parser parser = new Parser();
         foreach (var pair in scopeList)
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
-
-        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber(); // grados por segundo
+        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber();
         float rx = (float)parser.ParseNumber(rxExp).GetNumber();
         float ry = (float)parser.ParseNumber(ryExp).GetNumber();
         float rz = (float)parser.ParseNumber(rzExp).GetNumber();
 
-        Vector3 pivot = new Vector3(rx, ry, rz);
         float angleDelta = angleSpeed * Time.deltaTime;
 
-        // Rotación alrededor del eje Y (plano horizontal)
-        obj.transform.RotateAround(pivot, Vector3.up, angleDelta);
+        Vector3 localAxis = new Vector3(rx, ry, rz).normalized;
+        if (localAxis == Vector3.zero) localAxis = Vector3.up;
+        obj.transform.Rotate(localAxis, angleDelta, Space.Self);
 
-        // Guardamos la rotación actual en ry
+        Utils.SetProperty(obj.name + ".rx", obj.transform.eulerAngles.x, obj);
         Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
+        Utils.SetProperty(obj.name + ".rz", obj.transform.eulerAngles.z, obj);
     }
 
     public static void RotateTo(string xExp, string yExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)

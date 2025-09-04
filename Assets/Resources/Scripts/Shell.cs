@@ -8,7 +8,7 @@ public class Shell : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-            Action.Move("this.ry","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","this.ry","0",gameObject,scopeList);
         }
         if(Condition.Collision("BlueTank",gameObject)){
             Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
@@ -25,7 +25,7 @@ public class Shell : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.ry,this.speed)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.speed,0,this.ry,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
