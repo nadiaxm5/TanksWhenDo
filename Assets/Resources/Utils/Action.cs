@@ -155,30 +155,6 @@ public static class Action
         }
     }
 
-    public static void StopSound(string audioClip, GameObject obj)
-    {
-        AudioSource[] audios = obj.GetComponents<AudioSource>();
-        foreach (AudioSource audio in audios)
-        {
-            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
-            {
-                audio.Stop();
-                return;
-            }
-        }
-
-        AudioSource[] childAudios = obj.GetComponentsInChildren<AudioSource>();
-        foreach (AudioSource audio in childAudios)
-        {
-            if (audio.gameObject == obj) continue;
-            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
-            {
-                audio.Stop();
-                return;
-            }
-        }
-    }
-
     public static void PlayParticles(string particleSystemName, GameObject obj)
     {
         ParticleSystem ps = obj.GetComponent<ParticleSystem>();
@@ -195,26 +171,6 @@ public static class Action
             if (childPs.gameObject.name == particleSystemName && !childPs.isPlaying)
             {
                 childPs.Play();
-            }
-        }
-    }
-
-    public static void StopParticles(string particleSystemName, GameObject obj)
-    {
-        ParticleSystem ps = obj.GetComponent<ParticleSystem>();
-        if (ps != null && obj.name == particleSystemName && ps.isPlaying)
-        {
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            return;
-        }
-
-        ParticleSystem[] systems = obj.GetComponentsInChildren<ParticleSystem>();
-        foreach (ParticleSystem childPs in systems)
-        {
-            if (childPs.gameObject == obj) continue;
-            if (childPs.gameObject.name == particleSystemName && childPs.isPlaying)
-            {
-                childPs.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
         }
     }
