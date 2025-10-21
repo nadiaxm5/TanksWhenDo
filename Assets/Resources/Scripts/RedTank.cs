@@ -15,33 +15,33 @@ public class RedTank : MonoBehaviour {
         if(Condition.Collision("Shell",gameObject)){
             Action.Edit("this.health","this.health-Shell.damage",scopeList);
         }
-        if(Condition.Compare("this.health<=0",scopeList)){
+        if(Condition.Compare("Compare(this.health<=0)",scopeList)){
             Action.Edit("BlueWin.Active","1",scopeList);
         }
-        if(Condition.Compare("this.currentAim>=this.maxAim",scopeList)){
+        if(Condition.Compare("Compare(this.currentAim>=this.maxAim)",scopeList)){
             Action.Edit("this.currentAim","this.maxAim",scopeList);
         }
     }
     void Update(){
-        if(Condition.Keyboard("RightArrow","Press")){
+        if(Condition.Keyboard("RightArrow","press")){
             Action.Rotate("this.angularSpeed","this.rx","this.ry","this.rz",gameObject,scopeList);
             Action.PlayParticles("DustTrail",gameObject);
         }
-        if(Condition.Keyboard("LeftArrow","Press")){
+        if(Condition.Keyboard("LeftArrow","press")){
             Action.Rotate("-this.angularSpeed","this.rx","this.ry","this.rz",gameObject,scopeList);
             Action.PlayParticles("DustTrail",gameObject);
         }
-        if(Condition.Keyboard("UpArrow","Press")){
+        if(Condition.Keyboard("UpArrow","press")){
             Action.Move("this.speed","0","this.ry","0",gameObject,scopeList);
         }
-        if(Condition.Keyboard("DownArrow","Press")){
+        if(Condition.Keyboard("DownArrow","press")){
             Action.Move("this.speed","0","this.ry+180","0",gameObject,scopeList);
         }
-        if(Condition.Keyboard("Return","Press")){
+        if(Condition.Keyboard("Return","press")){
             Action.Edit("this.currentAim","this.currentAim+1",scopeList);
             Action.PlaySound("ShotCharging",gameObject);
         }
-        if(Condition.Keyboard("Return","Up")){
+        if(Condition.Keyboard("Return","up")){
             Action.Spawn("Shell", gameObject, "0", "this.despY", "this.despZ", "0", scopeList);
             Action.Edit("this.currentAim","0",scopeList);
             Action.PlaySound("ShotFiring",gameObject);
@@ -49,7 +49,7 @@ public class RedTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(BlueWin.Active,1);this.currentAim>=this.maxAim;Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

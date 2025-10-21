@@ -32,34 +32,21 @@ public static class Condition
         KeyCode k = (KeyCode)Enum.Parse(typeof(KeyCode), key);
         switch (keyMode)
         {
-            case "Press": return Input.GetKey(k);
-            case "Down": return Input.GetKeyDown(k);
-            case "Up": return Input.GetKeyUp(k);
+            case "press": return Input.GetKey(k);
+            case "down": return Input.GetKeyDown(k);
+            case "up": return Input.GetKeyUp(k);
             default: break;
         }
         return false;
     }
 
-    //Modificado
-    private static bool toggle = false;
-
     public static bool Touch(string type)
     {
         switch (type)
         {
-            case "Press": return Input.GetMouseButton(0);
-            case "Down": return Input.GetMouseButtonDown(0);
-            case "Up": return Input.GetMouseButtonUp(0);
-            case "Toggle":
-                {
-                    if (Input.GetMouseButton(0))
-                    {
-                        toggle = !toggle;
-                        return toggle;
-                    }
-                    toggle = false; // Reset cuando se suelta
-                    return false;
-                }
+            case "press": return Input.GetMouseButton(0);
+            case "down": return Input.GetMouseButtonDown(0);
+            case "up": return Input.GetMouseButtonUp(0);
             default: return false;
         }
     }
