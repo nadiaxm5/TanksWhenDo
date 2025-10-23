@@ -42,7 +42,7 @@ public class BlueTank : MonoBehaviour {
             Action.PlaySound("ShotCharging",gameObject);
         }
         if(Condition.Keyboard("Space","up")){
-            Action.Spawn("Shell", gameObject, "0", "this.despY", "this.despZ", "0", scopeList);
+            Action.Spawn("Shell", gameObject, "0", "this.despY", "this.despZ", "0", "0", "0", scopeList);
             Action.Edit("this.currentAim","0",scopeList);
             Action.PlaySound("ShotFiring",gameObject);
         }

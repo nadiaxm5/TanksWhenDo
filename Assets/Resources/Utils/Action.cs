@@ -18,52 +18,51 @@ public static class Action
         Utils.SetProperty(property, value, obj);
     }
 
-    public static void Spawn(string prefabName, GameObject spawnerObj, string offsetXExp, string offsetYExp, string offsetZExp, string extraAngleExp, Dictionary<string, GameObject> scopeList)
+    public static void Spawn(string prefabName, GameObject spawnerObj, string offsetXExp, string offsetYExp, string offsetZExp,
+                        string offsetRxExp, string offsetRyExp, string offsetRzExp, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (var pair in scopeList)
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
 
-        float offsetX = (float)parser.ParseNumber(offsetXExp).GetNumber();
-        float offsetY = (float)parser.ParseNumber(offsetYExp).GetNumber();
-        float offsetZ = (float)parser.ParseNumber(offsetZExp).GetNumber();
-        float extraAngle = (float)parser.ParseNumber(extraAngleExp).GetNumber();
+        float ParseNum(string exp) => (float)parser.ParseNumber(exp).GetNumber();
 
-        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
-        if (prefab == null)
+        Vector3 offsetPos = new(ParseNum(offsetXExp), ParseNum(offsetYExp), ParseNum(offsetZExp));
+        Vector3 offsetRot = new(ParseNum(offsetRxExp), ParseNum(offsetRyExp), ParseNum(offsetRzExp));
+
+        var prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
+        if (!prefab)
         {
             Debug.LogWarning($"Prefab '{prefabName}' no encontrado en Resources/Prefabs.");
             return;
         }
 
-        GameObject newObj = Object.Instantiate(prefab);
+        var newObj = Object.Instantiate(prefab);
         newObj.name = prefab.name;
         newObj.SetActive(true);
 
-        System.Type scriptType = System.Type.GetType(prefabName);
+        newObj.transform.position = spawnerObj.transform.TransformPoint(offsetPos);
+        newObj.transform.rotation = spawnerObj.transform.rotation * Quaternion.Euler(offsetRot);
+        newObj.transform.localScale = prefab.transform.localScale;
+
+        var scriptType = System.Type.GetType(prefabName);
         if (scriptType?.IsSubclassOf(typeof(MonoBehaviour)) == true)
         {
             var script = newObj.AddComponent(scriptType);
             scriptType.GetField("Active")?.SetValue(script, true);
-            var propList = scriptType.GetField("propertyList")?.GetValue(script) as Dictionary<string, float>;
-            if (propList != null)
-                foreach (var kvp in propList)
-                    scriptType.GetField(kvp.Key)?.SetValue(script, kvp.Value);
-        }
 
-        Vector3 localOffset = new Vector3(offsetX, offsetY, offsetZ);
-        Vector3 spawnPos = spawnerObj.transform.TransformPoint(localOffset);
-        newObj.transform.position = spawnPos;
-        Vector3 baseEuler = spawnerObj.transform.eulerAngles;
-        newObj.transform.eulerAngles = new Vector3(0, baseEuler.y + extraAngle, 0);
-        newObj.transform.localScale = prefab.transform.localScale;
+            if (scriptType.GetField("propertyList")?.GetValue(script) is Dictionary<string, float> props)
+                foreach (var (prop, val) in props)
+                    scriptType.GetField(prop)?.SetValue(script, val);
+        }
 
         if (newObj.TryGetComponent(out LineRenderer lr))
         {
-            Vector3 start = spawnPos;
-            float angleRad = newObj.transform.eulerAngles.y * Mathf.Deg2Rad;
-            Vector3 dir = new Vector3(Mathf.Sin(angleRad), 0, Mathf.Cos(angleRad));
-            Vector3 end = Physics.Raycast(start, dir, out RaycastHit hit, 100f) ? hit.point : start + dir * 100f;
+            Vector3 start = newObj.transform.position;
+            Vector3 dir = newObj.transform.forward;
+            Vector3 end = Physics.Raycast(start, dir, out RaycastHit hit, 100f)
+                ? hit.point
+                : start + dir * 100f;
             lr.SetPosition(0, start);
             lr.SetPosition(1, end);
         }

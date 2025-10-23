@@ -251,7 +251,7 @@ public static class Scripts
             for (int i = 2; i < parameters.Length; i++)
                 extraParams.Add($"\"{parameters[i].Trim()}\"");
 
-            while (extraParams.Count < 4)
+            while (extraParams.Count < 6)
                 extraParams.Add("\"0\"");
 
             foreach (string param in extraParams)

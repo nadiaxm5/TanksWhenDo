@@ -11,15 +11,15 @@ public class Shell : MonoBehaviour {
             Action.Move("this.speed","0","this.ry","0",gameObject,scopeList);
         }
         if(Condition.Collision("BlueTank",gameObject)){
-            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
         if(Condition.Collision("RedTank",gameObject)){
-            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
         if(Condition.Collision("Obstacle",gameObject)){
-            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", scopeList);
+            Action.Spawn("ShellExplosion", gameObject, "0", "0", "0", "0", "0", "0", scopeList);
             Action.Delete(gameObject);
         }
     }
