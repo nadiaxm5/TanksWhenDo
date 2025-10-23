@@ -94,30 +94,50 @@ public static class Action
         Utils.SetProperty("this.z", obj.transform.position.z + delta.z, obj);
     }
 
-    public static void MoveTo(string xExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    public static void MoveTo(string speedExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (KeyValuePair<string, GameObject> s in scopeList)
             parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
-        float x = (float)parser.ParseNumber(xExp).GetNumber();
-        float z = (float)parser.ParseNumber(zExp).GetNumber();
+
+        float targetX = (float)parser.ParseNumber(xExp).GetNumber();
+        float targetY = (float)parser.ParseNumber(yExp).GetNumber();
+        float targetZ = (float)parser.ParseNumber(zExp).GetNumber();
         float speed = (float)parser.ParseNumber(speedExp).GetNumber();
-        Utils.SetProperty("this.x", obj.transform.position.x + speed * (x - obj.transform.position.x) * Time.deltaTime, obj);
-        Utils.SetProperty("this.z", obj.transform.position.z + speed * (z - obj.transform.position.z) * Time.deltaTime, obj);
+
+        Vector3 currentPos = obj.transform.position;
+        Vector3 targetPos = new Vector3(targetX, targetY, targetZ);
+        Vector3 direction = (targetPos - currentPos).normalized;
+        Vector3 step = direction * speed * Time.deltaTime;
+
+        if (step.magnitude > Vector3.Distance(currentPos, targetPos))
+            step = targetPos - currentPos;
+        Vector3 newPos = currentPos + step;
+
+        Utils.SetProperty("this.x", newPos.x, obj);
+        Utils.SetProperty("this.y", newPos.y, obj);
+        Utils.SetProperty("this.z", newPos.z, obj);
     }
 
-    public static void NavigateTo(string xExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    public static void NavigateTo(string speedExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (KeyValuePair<string, GameObject> s in scopeList)
             parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
 
         float x = (float)parser.ParseNumber(xExp).GetNumber();
+        float y = (float)parser.ParseNumber(yExp).GetNumber();
         float z = (float)parser.ParseNumber(zExp).GetNumber();
         float speed = (float)parser.ParseNumber(speedExp).GetNumber();
+
         NavMeshAgent agent = obj.GetComponent<NavMeshAgent>();
+        if (agent == null) return;
+
         agent.speed = speed;
-        agent.SetDestination(new Vector3(x, obj.transform.position.y, z));
+        Vector3 target = new Vector3(x, y, z); //If the NavMesh is on a plain terrain, y will be ignored
+
+        if (agent.isOnNavMesh) agent.SetDestination(target);
+        else Debug.LogWarning($"'{obj.name}' is not on the NavMesh, it cannot be navigated");
     }
 
     public static void LoadScene()
