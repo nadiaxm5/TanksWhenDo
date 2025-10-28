@@ -15,10 +15,10 @@ public class RedTank : MonoBehaviour {
         if(Condition.Collision("Shell",gameObject)){
             Action.Edit("this.health","this.health-Shell.damage",scopeList);
         }
-        if(Condition.Compare("Compare(this.health<=0)",scopeList)){
+        if(Condition.Compare("this.health<=0",scopeList)){
             Action.Edit("BlueWin.Active","1",scopeList);
         }
-        if(Condition.Compare("Compare(this.currentAim>=this.maxAim)",scopeList)){
+        if(Condition.Compare("this.currentAim>=this.maxAim",scopeList)){
             Action.Edit("this.currentAim","this.maxAim",scopeList);
         }
     }
@@ -49,7 +49,7 @@ public class RedTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(BlueWin.Active,1);this.currentAim>=this.maxAim;Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

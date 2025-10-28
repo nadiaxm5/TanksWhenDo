@@ -9,17 +9,16 @@ public static class Action
     public static void Edit(string property, string valueExp, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
-        foreach (KeyValuePair<string, GameObject> s in scopeList)
-        {
-            parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
-        }
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
         float value = (float)parser.ParseNumber(valueExp).GetNumber();
         GameObject obj = scopeList[property];
         Utils.SetProperty(property, value, obj);
     }
 
     public static void Spawn(string prefabName, GameObject spawnerObj, string offsetXExp, string offsetYExp, string offsetZExp,
-                        string offsetRxExp, string offsetRyExp, string offsetRzExp, Dictionary<string, GameObject> scopeList)
+                            string offsetRxExp, string offsetRyExp, string offsetRzExp, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (var pair in scopeList)
@@ -73,21 +72,19 @@ public static class Action
         obj.GetComponent<Animator>().SetInteger("State", int.Parse(state));
     }
 
-    public static void Move(string speedExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    public static void Move(string vExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
-        foreach (KeyValuePair<string, GameObject> s in scopeList)
-            parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
-        float speed = (float)parser.ParseNumber(speedExp).GetNumber();
-        float rx = (float)parser.ParseNumber(rxExp).GetNumber();
-        float ry = (float)parser.ParseNumber(ryExp).GetNumber();
-        float rz = (float)parser.ParseNumber(rzExp).GetNumber();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
 
-        Vector3 dir = Quaternion.Euler(rx, ry, rz) * Vector3.forward;
+        float v = (float)parser.ParseNumber(vExp).GetNumber();
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber() * Mathf.Deg2Rad;
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber() * Mathf.Deg2Rad;
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber() * Mathf.Deg2Rad;
 
-        if (dir.sqrMagnitude > 0.0001f) dir.Normalize();
-
-        Vector3 delta = dir * speed * Time.deltaTime;
+        Vector3 direction = new Vector3(Mathf.Cos(rx) * Mathf.Sin(ry), Mathf.Sin(rx), Mathf.Cos(rx) * Mathf.Cos(ry)).normalized;
+        Vector3 delta = direction * v * Time.deltaTime;
 
         Utils.SetProperty("this.x", obj.transform.position.x + delta.x, obj);
         Utils.SetProperty("this.y", obj.transform.position.y + delta.y, obj);
@@ -97,8 +94,8 @@ public static class Action
     public static void MoveTo(string speedExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
-        foreach (KeyValuePair<string, GameObject> s in scopeList)
-            parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
 
         float targetX = (float)parser.ParseNumber(xExp).GetNumber();
         float targetY = (float)parser.ParseNumber(yExp).GetNumber();
@@ -122,8 +119,8 @@ public static class Action
     public static void NavigateTo(string speedExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
-        foreach (KeyValuePair<string, GameObject> s in scopeList)
-            parser.ExpressionContext[s.Key].Set(Utils.GetProperty(s));
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
 
         float x = (float)parser.ParseNumber(xExp).GetNumber();
         float y = (float)parser.ParseNumber(yExp).GetNumber();
@@ -205,6 +202,7 @@ public static class Action
         Parser parser = new Parser();
         foreach (var pair in scopeList)
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
         float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber();
         float rx = (float)parser.ParseNumber(rxExp).GetNumber();
         float ry = (float)parser.ParseNumber(ryExp).GetNumber();
@@ -225,9 +223,7 @@ public static class Action
     {
         Parser parser = new Parser();
         foreach (var pair in scopeList)
-        {
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
-        }
 
         float x = (float)parser.ParseNumber(xExp).GetNumber();
         float y = (float)parser.ParseNumber(yExp).GetNumber();
@@ -247,5 +243,69 @@ public static class Action
         );
 
         Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
+    }
+
+    public static void Push(string forceExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        float force = (float)parser.ParseNumber(forceExp).GetNumber();
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber() * Mathf.Deg2Rad;
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber() * Mathf.Deg2Rad;
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber() * Mathf.Deg2Rad;
+
+        Vector3 direction = new Vector3(
+            Mathf.Cos(rx) * Mathf.Sin(ry),
+            Mathf.Sin(rx),
+            Mathf.Cos(rx) * Mathf.Cos(ry)
+        ).normalized;
+
+        Vector3 forceVector = direction * force;
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+
+        if (rb != null) rb.AddForce(forceVector, ForceMode.Force); // F = m·a
+        else obj.transform.position += forceVector * Time.deltaTime;
+    }
+
+    public static void PushTo(string forceExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        float force = (float)parser.ParseNumber(forceExp).GetNumber();
+        float targetX = (float)parser.ParseNumber(xExp).GetNumber();
+        float targetY = (float)parser.ParseNumber(yExp).GetNumber();
+        float targetZ = (float)parser.ParseNumber(zExp).GetNumber();
+
+        Vector3 targetPos = new Vector3(targetX, targetY, targetZ);
+        Vector3 direction = (targetPos - obj.transform.position).normalized;
+        Vector3 forceVector = direction * force;
+
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        if (rb != null) rb.AddForce(forceVector, ForceMode.Force);
+        else obj.transform.position += forceVector * Time.deltaTime;
+    }
+
+    public static void Torque(string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber();
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber();
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber();
+
+        Vector3 torqueVector = new Vector3(rx, ry, rz);
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        if (rb != null) rb.AddTorque(torqueVector, ForceMode.Force);
+        else obj.transform.Rotate(torqueVector * Time.deltaTime, Space.Self);
+
+        Utils.SetProperty(obj.name + ".rx", obj.transform.eulerAngles.x, obj);
+        Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
+        Utils.SetProperty(obj.name + ".rz", obj.transform.eulerAngles.z, obj);
     }
 }

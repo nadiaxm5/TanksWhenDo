@@ -237,7 +237,7 @@ public static class Scripts
             if (parameters.Length != counter) command += ",";
         }
         if (name == "Compare" || name == "Edit") command += ",scopeList)";
-        else if (name == "Move" || name == "MoveTo" || name == "NavigateTo" || name == "RotateTo" || name == "Rotate") command += ",gameObject,scopeList)";
+        else if (name == "Move" || name == "MoveTo" || name == "NavigateTo" || name == "RotateTo" || name == "Rotate" || name == "Push" || name == "PushTo" || name == "Torque") command += ",gameObject,scopeList)";
         else if (name == "Collision" || name == "Animate" || name == "PlaySound" || name == "StopSound" || name == "PlayParticles" || name == "StopParticles") command += ",gameObject)";
         else if (name == "Keyboard" || name == "Touch") command += ")";
         else if (name == "Delete") command = "Delete(gameObject)";

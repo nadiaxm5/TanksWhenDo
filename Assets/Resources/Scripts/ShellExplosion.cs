@@ -11,13 +11,13 @@ public class ShellExplosion : MonoBehaviour {
             Action.PlayParticles("ShellExplosion",gameObject);
             Action.PlaySound("ShellExplosion",gameObject);
         }
-        if(Condition.Compare("Compare(this.counter<0)",scopeList)){
+        if(Condition.Compare("this.counter<0",scopeList)){
             Action.Delete(gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.counter,this.counter-1);Compare(this.counter<0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.counter,this.counter-1);this.counter<0");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

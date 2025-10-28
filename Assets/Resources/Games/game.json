@@ -41,7 +41,7 @@
                     "Do": ["this.health=this.health-Shell.damage"]
                 },
                 {
-                    "When": ["Compare(this.health<=0)"],
+                    "When": ["this.health<=0"],
                     "Do": ["RedWin.Active=1"]
                 },
                 {
@@ -49,7 +49,7 @@
                     "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
                 },
                 {
-                    "When": ["Compare(this.currentAim>=this.maxAim)"],
+                    "When": ["this.currentAim>=this.maxAim"],
                     "Do": ["this.currentAim=this.maxAim"]
                 },
                 {
@@ -87,7 +87,7 @@
                     "Do": ["this.health=this.health-Shell.damage"]
                 },
                 {
-                    "When": ["Compare(this.health<=0)"],
+                    "When": ["this.health<=0"],
                     "Do": ["BlueWin.Active=1"]
                 },
                 {
@@ -95,7 +95,7 @@
                     "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
                 },
                 {
-                    "When": ["Compare(this.currentAim>=this.maxAim)"],
+                    "When": ["this.currentAim>=this.maxAim"],
                     "Do": ["this.currentAim=this.maxAim"]
                 },
                 {
@@ -138,7 +138,7 @@
                     "Do": ["this.counter=this.counter-1", "PlayParticles(ShellExplosion)", "PlaySound(ShellExplosion)"]
                 },
                 {
-                    "When": ["Compare(this.counter<0)"],
+                    "When": ["this.counter<0"],
                     "Do": ["Delete(this)"]
                 }
             ]
@@ -191,7 +191,7 @@
                     "Do":["this.counter=this.counter+1"]
                 },
                 {
-                    "When":["Compare(this.counter==150)"],
+                    "When":["this.counter==150"],
                     "Do":["LoadScene()"]
                 }
             ]
@@ -206,7 +206,7 @@
                     "Do":["this.counter=this.counter+1"]
                 },
                 {
-                    "When":["Compare(this.counter==150)"],
+                    "When":["this.counter==150"],
                     "Do":["LoadScene()"]
                 }
             ]
