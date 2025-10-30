@@ -67,9 +67,14 @@ public static class Action
         }
     }
 
-    public static void Animate(string state, GameObject obj)
+    public static void Animate(string animationName, GameObject obj)
     {
-        obj.GetComponent<Animator>().SetInteger("State", int.Parse(state));
+        Animator animator = obj.GetComponent<Animator>();
+        if (animator != null)
+        {
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            if (!currentState.IsName(animationName)) animator.Play(animationName);
+        }
     }
 
     public static void Move(string vExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
