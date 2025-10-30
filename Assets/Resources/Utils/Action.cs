@@ -224,28 +224,29 @@ public static class Action
         Utils.SetProperty(obj.name + ".rz", obj.transform.eulerAngles.z, obj);
     }
 
-    public static void RotateTo(string xExp, string yExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    public static void RotateTo(string aExp, string dxExp, string dyExp, string dzExp, string pxExp, string pyExp, string pzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
     {
         Parser parser = new Parser();
         foreach (var pair in scopeList)
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
 
-        float x = (float)parser.ParseNumber(xExp).GetNumber();
-        float y = (float)parser.ParseNumber(yExp).GetNumber();
-        float z = (float)parser.ParseNumber(zExp).GetNumber();
-        float speed = (float)parser.ParseNumber(speedExp).GetNumber();
+        float a = (float)parser.ParseNumber(aExp).GetNumber();
+        float dx = (float)parser.ParseNumber(dxExp).GetNumber();
+        float dy = (float)parser.ParseNumber(dyExp).GetNumber();
+        float dz = (float)parser.ParseNumber(dzExp).GetNumber();
+        float px = (float)parser.ParseNumber(pxExp).GetNumber();
+        float py = (float)parser.ParseNumber(pyExp).GetNumber();
+        float pz = (float)parser.ParseNumber(pzExp).GetNumber();
 
-        Vector3 targetPos = new Vector3(x, y, z);
-        Vector3 dir = targetPos - obj.transform.position;
-        dir.y = 0f;
-        if (dir == Vector3.zero) return;
+        Vector3 pivot = new Vector3(px, py, pz);
+        Vector3 targetDir = new Vector3(dx, dy, dz) - pivot;
+        Vector3 currentDir = obj.transform.position - pivot;
 
-        Quaternion targetRot = Quaternion.LookRotation(dir);
-        obj.transform.rotation = Quaternion.RotateTowards(
-            obj.transform.rotation,
-            targetRot,
-            speed * Time.deltaTime
-        );
+        Quaternion targetRot = Quaternion.LookRotation(targetDir.normalized, Vector3.up);
+        obj.transform.rotation = Quaternion.RotateTowards(obj.transform.rotation, targetRot, a * Time.deltaTime);
+
+        Vector3 rotatedPos = pivot + targetRot * currentDir.normalized * currentDir.magnitude;
+        obj.transform.position = rotatedPos;
 
         Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
     }
