@@ -38,23 +38,23 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["this.health=this.health-Shell.damage"]
+                    "Do": ["Edit(this.health,this.health-Shell.damage)"]
                 },
                 {
-                    "When": ["this.health<=0"],
-                    "Do": ["RedWin.Active=1"]
+                    "When": ["Compare(this.health<=0)"],
+                    "Do": ["Edit(RedWin.Active,1)"]
                 },
                 {
                     "When": ["Keyboard(Space,press)"],
-                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
+                    "Do": ["Edit(this.currentAim,this.currentAim+1)", "PlaySound(ShotCharging)"]
                 },
                 {
-                    "When": ["this.currentAim>=this.maxAim"],
-                    "Do": ["this.currentAim=this.maxAim"]
+                    "When": ["Compare(this.currentAim>=this.maxAim)"],
+                    "Do": ["Edit(this.currentAim,this.maxAim)"]
                 },
                 {
                     "When": ["Keyboard(Space,up)"],
-                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "this.currentAim=0", "PlaySound(ShotFiring)"]
+                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "Edit(this.currentAim,0)", "PlaySound(ShotFiring)"]
                 }
             ]
         },
@@ -84,23 +84,23 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["this.health=this.health-Shell.damage"]
+                    "Do": ["Edit(this.health,this.health-Shell.damage)"]
                 },
                 {
-                    "When": ["this.health<=0"],
-                    "Do": ["BlueWin.Active=1"]
+                    "When": ["Compare(this.health<=0)"],
+                    "Do": ["Edit(BlueWin.Active,1)"]
                 },
                 {
                     "When": ["Keyboard(Return,press)"],
-                    "Do": ["this.currentAim=this.currentAim+1", "PlaySound(ShotCharging)"]
+                    "Do": ["Edit(this.currentAim,this.currentAim+1)", "PlaySound(ShotCharging)"]
                 },
                 {
-                    "When": ["this.currentAim>=this.maxAim"],
-                    "Do": ["this.currentAim=this.maxAim"]
+                    "When": ["Compare(this.currentAim>=this.maxAim)"],
+                    "Do": ["Edit(this.currentAim,this.maxAim)"]
                 },
                 {
                     "When": ["Keyboard(Return,up)"],
-                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "this.currentAim=0", "PlaySound(ShotFiring)"]
+                    "Do": ["Spawn(Shell,this,0,this.despY,this.despZ)", "Edit(this.currentAim,0)", "PlaySound(ShotFiring)"]
                 }
             ]
         },
@@ -135,10 +135,10 @@
             "Properties": ["counter=20"],
             "Script": [
                 {
-                    "Do": ["this.counter=this.counter-1", "PlayParticles(ShellExplosion)", "PlaySound(ShellExplosion)"]
+                    "Do": ["Edit(this.counter,this.counter-1)", "PlayParticles(ShellExplosion)", "PlaySound(ShellExplosion)"]
                 },
                 {
-                    "When": ["this.counter<0"],
+                    "When": ["Compare(this.counter<0)"],
                     "Do": ["Delete(this)"]
                 }
             ]
@@ -148,7 +148,7 @@
             "Prefab": "BlueAim",
             "Script": [
                 {
-                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueTank.currentAim"]
+                    "Do": ["Edit(this.x,BlueTank.x)", "Edit(this.y,BlueTank.y)", "Edit(this.z,BlueTank.z)", "Edit(this.ry,BlueTank.ry)", "Edit(this.value,BlueTank.currentAim)"]
                 }
             ]
         },
@@ -157,7 +157,7 @@
             "Prefab": "RedAim",
             "Script": [
                 {
-                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedTank.currentAim"]
+                    "Do": ["Edit(this.x,RedTank.x)", "Edit(this.y,RedTank.y)", "Edit(this.z,RedTank.z)", "Edit(this.ry,RedTank.ry)", "Edit(this.value,RedTank.currentAim)"]
                 }
             ]
         },
@@ -167,7 +167,7 @@
             "Properties": ["despY=0.05"],
             "Script": [
                 {
-                    "Do": ["this.x=RedTank.x", "this.y=RedTank.y+this.despY", "this.z=RedTank.z", "this.ry=RedTank.ry", "this.value=RedTank.health"]
+                    "Do": ["Edit(this.x,RedTank.x)", "Edit(this.y,RedTank.y+this.despY)", "Edit(this.z,RedTank.z)", "Edit(this.ry,RedTank.ry)", "Edit(this.value,RedTank.health)"]
                 }
             ]
         },
@@ -177,7 +177,7 @@
             "Properties": ["despY=0.05"],
             "Script": [
                 {
-                    "Do": ["this.x=BlueTank.x", "this.y=BlueTank.y+this.despY", "this.z=BlueTank.z", "this.ry=BlueTank.ry", "this.value=BlueTank.health"]
+                    "Do": ["Edit(this.x,BlueTank.x)", "Edit(this.y,BlueTank.y+this.despY)", "Edit(this.z,BlueTank.z)", "Edit(this.ry,BlueTank.ry)", "Edit(this.value,BlueTank.health)"]
                 }
             ]
         },
@@ -188,10 +188,10 @@
             "Properties":["counter=0"],
             "Script": [
                 {
-                    "Do":["this.counter=this.counter+1"]
+                    "Do":["Edit(this.counter,this.counter+1)"]
                 },
                 {
-                    "When":["this.counter==150"],
+                    "When":["Compare(this.counter==150)"],
                     "Do":["LoadScene()"]
                 }
             ]
@@ -203,10 +203,10 @@
             "Properties":["counter=0"],
             "Script": [
                 {
-                    "Do":["this.counter=this.counter+1"]
+                    "Do":["Edit(this.counter,this.counter+1)"]
                 },
                 {
-                    "When":["this.counter==150"],
+                    "When":["Compare(this.counter==150)"],
                     "Do":["LoadScene()"]
                 }
             ]
@@ -218,9 +218,9 @@
             "Script": [
                 {
                     "Do":[
-                            "Camera.x=(BlueTank.x+RedTank.x)/2 - this.despX",
-                            "Camera.y=this.despY + (abs(BlueTank.x-RedTank.x)+abs(BlueTank.z-RedTank.z))/3",
-                            "Camera.z=(BlueTank.z+RedTank.z)/2 - this.despZ"
+                            "Edit(Camera.x,(BlueTank.x+RedTank.x)/2 - this.despX)",
+                            "Edit(Camera.y,this.despY + (abs(BlueTank.x-RedTank.x)+abs(BlueTank.z-RedTank.z))/3)",
+                            "Edit(Camera.z,(BlueTank.z+RedTank.z)/2 - this.despZ)"
                     ]
                 }
             ]

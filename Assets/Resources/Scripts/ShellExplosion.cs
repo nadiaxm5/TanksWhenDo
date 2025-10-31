@@ -17,7 +17,7 @@ public class ShellExplosion : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.counter,this.counter-1);this.counter<0");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.counter,this.counter-1);PlayParticles(ShellExplosion);PlaySound(ShellExplosion);Compare(this.counter<0);Delete(this)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

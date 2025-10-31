@@ -25,7 +25,7 @@ public class Shell : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.speed,0,this.ry,0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.speed,0,this.ry,0);Spawn(ShellExplosion, this);Delete(this)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

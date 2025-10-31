@@ -70,10 +70,10 @@ public static class Scripts
                             string newC = c;
                             if (c.Contains("Collision")) hasCollision = true;
                             else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
-                            else if (!c.Contains("Keyboard"))
+                            else
                             {
                                 scope.Add(c);
-                                newC = "Compare(" + c + ")";
+                                newC = c;
                             }
                             outfile.Write("Condition." + StringToCommand(newC));
                             if (s.When.Last() != c) outfile.Write(" && ");
@@ -88,14 +88,8 @@ public static class Scripts
                     foreach (string a in s.Do)
                     {
                         string newA = a;
-                        if (a.Contains("="))
-                        {
-                            var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
-                            newA = "Edit(" + elements[0] + "," + elements[1] + ")";
-                            scope.Add(newA);
-                        }
-                        else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
-                        else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
+                        if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
+                        scope.Add(a);
 
                         outfile.WriteLine("            Action." + StringToCommand(newA) + ";");
                     }
@@ -118,10 +112,10 @@ public static class Scripts
                             string newC = c;
                             if (c.Contains("Collision")) hasCollision = true;
                             else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
-                            else if (!c.Contains("Keyboard"))
+                            else
                             {
                                 scope.Add(c);
-                                newC = "Compare(" + c + ")";
+                                newC = c;
                             }
                             outfile.Write("Condition." + StringToCommand(newC));
                             if (s.When.Last() != c) outfile.Write(" && ");
@@ -136,14 +130,8 @@ public static class Scripts
                     foreach (string a in s.Do)
                     {
                         string newA = a;
-                        if (a.Contains("="))
-                        {
-                            var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
-                            newA = "Edit(" + elements[0] + "," + elements[1] + ")";
-                            scope.Add(newA);
-                        }
-                        else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
-                        else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
+                        if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
+                        scope.Add(a);
 
                         outfile.WriteLine("            Action." + StringToCommand(newA) + ";");
                     }

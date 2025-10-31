@@ -49,7 +49,7 @@ public class BlueTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);this.health<=0;Edit(RedWin.Active,1);this.currentAim>=this.maxAim;Edit(this.currentAim,this.maxAim);Move(this.speed,0,this.ry,0);Move(this.speed,0,this.ry+180,0);Edit(this.currentAim,this.currentAim+1);Edit(this.currentAim,0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);Compare(this.health<=0);Edit(RedWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(D,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(A,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(W,press);Move(this.speed,0,this.ry,0);Keyboard(S,press);Move(this.speed,0,this.ry+180,0);Keyboard(Space,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Space,up);Spawn(Shell,this,0,this.despY,this.despZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
