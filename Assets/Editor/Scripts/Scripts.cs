@@ -224,7 +224,7 @@ public static class Scripts
             command += "\"" + s + "\"";
             if (parameters.Length != counter) command += ",";
         }
-        if (name == "Compare" || name == "Edit") command += ",scopeList)";
+        if (name == "Compare" || name == "Edit" || name == "Check") command += ",scopeList)";
         else if (name == "Move" || name == "MoveTo" || name == "NavigateTo" || name == "RotateTo" || name == "Rotate" || name == "Push" || name == "PushTo" || name == "Torque") command += ",gameObject,scopeList)";
         else if (name == "Collision" || name == "Animate" || name == "PlaySound" || name == "StopSound" || name == "PlayParticles" || name == "StopParticles") command += ",gameObject)";
         else if (name == "Keyboard" || name == "Touch") command += ")";

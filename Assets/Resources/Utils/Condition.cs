@@ -13,6 +13,16 @@ public static class Condition
         return (parser.Parse(a).GetResult());
     }
 
+    public static bool Check(string variable, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        var num = parser.ParseNumber(variable).GetNumber();
+        return ((float)num) != 0f;
+    }
+
     public static bool Collision(string tag, GameObject obj)
     {
         var script = obj.GetComponent(typeof(MonoBehaviour));
