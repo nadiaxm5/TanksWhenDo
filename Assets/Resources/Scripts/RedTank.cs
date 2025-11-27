@@ -11,6 +11,7 @@ public class RedTank : MonoBehaviour {
     public float maxAim=200f;
     public float currentAim=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         if(Condition.Collision("Shell",gameObject)){
             Action.Edit("this.health","this.health-Shell.damage",scopeList);
@@ -49,7 +50,7 @@ public class RedTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.health,this.health-Shell.damage);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Return,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Return,up);Spawn(Shell,this,0,this.despY,this.despZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Collision(Shell);Edit(this.health,this.health-Shell.damage);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Return,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Return,up);Spawn(Shell,this,0,this.despY,this.despZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

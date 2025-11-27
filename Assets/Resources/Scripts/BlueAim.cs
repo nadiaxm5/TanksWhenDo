@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class BlueAim : MonoBehaviour {
     public bool Active = true;
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("this.x","BlueTank.x",scopeList);

@@ -7,12 +7,17 @@ public static class Utils
 {
     public static float GetProperty(KeyValuePair<string, GameObject> s)
     {
-        string[] elements = s.Key.Split(new string[] { "." }, StringSplitOptions.None);
-        if (elements.Length < 2) return float.NaN;
         GameObject obj = s.Value;
         float value = float.NaN;
+        if (s.Key.StartsWith("#"))
+        {
+            return GetGameManagerProperty(s.Key.Substring(1), obj);
+        }
+        string[] elements = s.Key.Split(new string[] { "." }, StringSplitOptions.None);
+        if (elements.Length < 2) return float.NaN;
+
         if (obj != null)
-        { // if the object exist, it is not deleted
+        {
             switch (elements[1])
             {
                 case "x": value = obj.transform.position.x; break;
@@ -36,7 +41,7 @@ public static class Utils
                     break;
 
                 default:
-                    {// search on script properties
+                    {
                         var script = obj.GetComponent(obj.name);
                         value = (float)script.GetType().GetField(elements[1]).GetValue(script);
                         break;
@@ -46,8 +51,72 @@ public static class Utils
         return (value);
     }
 
+    private static float GetGameManagerProperty(string propertyPath, GameObject gameManagerObj)
+    {
+        GameManager gameManager = gameManagerObj.GetComponent<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.Log("GameManager component not found");
+            return float.NaN;
+        }
+
+        string[] parts = propertyPath.Split('.');
+
+        if (parts.Length == 2)
+        {
+            string mainProperty = parts[0];
+            string subProperty = parts[1];
+            var field = typeof(GameManager).GetField(mainProperty);
+            var property = typeof(GameManager).GetProperty(mainProperty);
+
+            object value = null;
+            if (field != null)
+            {
+                value = field.GetValue(gameManager);
+            }
+            else if (property != null)
+            {
+                value = property.GetValue(gameManager);
+            }
+            else
+            {
+                Debug.LogError($"Property '{mainProperty}' not found in GameManager");
+                return float.NaN;
+            }
+
+            if (value is Vector3 vector3)
+            {
+                if (subProperty == "x") return vector3.x;
+                if (subProperty == "y") return vector3.y;
+                if (subProperty == "z") return vector3.z;
+            }
+            else if (value is Vector2 vector2)
+            {
+                if (subProperty == "x") return vector2.x;
+                if (subProperty == "y") return vector2.y;
+            }
+            else if (value is float f)
+            {
+                return f;
+            }
+            else if (value is int i)
+            {
+                return i;
+            }
+
+            Debug.LogError($"Unsupported GameManager property type: {value.GetType()}");
+        }
+
+        return float.NaN;
+    }
+
     public static void SetProperty(string property, float value, GameObject obj)
     {
+        if (property.StartsWith("#"))
+        {
+            SetGameManagerProperty(property.Substring(1), value, obj);
+            return;
+        }
         string[] elements = property.Split(new string[] { "." }, StringSplitOptions.None);
         if (obj != null)
         {
@@ -64,7 +133,7 @@ public static class Utils
                 case "sy": obj.transform.localScale = new Vector3(obj.transform.localScale.x, value, obj.transform.localScale.z); break;
                 case "sz": obj.transform.localScale = new Vector3(obj.transform.localScale.x, obj.transform.localScale.y, value); break;
                 case "Active":
-                    obj.SetActive(value != 0); // cualquier valor distinto de 0 se considera true
+                    obj.SetActive(value != 0);
                     if (script != null && script.GetType().GetField("Active") != null)
                         script.GetType().GetField("Active").SetValue(script, value != 0);
                     break;
@@ -80,9 +149,91 @@ public static class Utils
                     break;
 
                 default:
-                    {// search on script properties
+                    {
                         script.GetType().GetField(elements[1]).SetValue(script, value); break;
                     }
+            }
+        }
+    }
+
+    private static void SetGameManagerProperty(string propertyPath, float value, GameObject gameManagerObj)
+    {
+        GameManager gameManager = gameManagerObj.GetComponent<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager component not found");
+            return;
+        }
+
+        string[] parts = propertyPath.Split('.');
+
+        if (parts.Length == 2)
+        {
+            string mainProperty = parts[0];
+            string subProperty = parts[1];
+            var field = typeof(GameManager).GetField(mainProperty);
+            var propertyInfo = typeof(GameManager).GetProperty(mainProperty);
+
+            object mainValue = null;
+            if (field != null)
+            {
+                mainValue = field.GetValue(gameManager);
+            }
+            else if (propertyInfo != null)
+            {
+                mainValue = propertyInfo.GetValue(gameManager);
+            }
+            else
+            {
+                Debug.LogError($"Property '{mainProperty}' not found in GameManager");
+                return;
+            }
+
+            if (mainValue is Vector3 vector3)
+            {
+                Vector3 newVector = vector3;
+                if (subProperty == "x") newVector.x = value;
+                else if (subProperty == "y") newVector.y = value;
+                else if (subProperty == "z") newVector.z = value;
+
+                if (field != null)
+                {
+                    field.SetValue(gameManager, newVector);
+                }
+                else if (propertyInfo != null)
+                {
+                    propertyInfo.SetValue(gameManager, newVector);
+                }
+            }
+            else if (mainValue is Vector2 vector2)
+            {
+                Vector2 newVector = vector2;
+                if (subProperty == "x") newVector.x = value;
+                else if (subProperty == "y") newVector.y = value;
+
+                if (field != null)
+                {
+                    field.SetValue(gameManager, newVector);
+                }
+                else if (propertyInfo != null)
+                {
+                    propertyInfo.SetValue(gameManager, newVector);
+                }
+            }
+            else
+            {
+                if (field != null && field.FieldType == typeof(float))
+                {
+                    field.SetValue(gameManager, value);
+                }
+                else if (propertyInfo != null && propertyInfo.PropertyType == typeof(float))
+                {
+                    propertyInfo.SetValue(gameManager, value);
+                }
+                else
+                {
+                    Debug.LogError($"Unsupported property type for '{mainProperty}'");
+                }
             }
         }
     }
@@ -141,29 +292,90 @@ public static class Utils
             }
         }
 
-        // Añadir variables globales
-        if (GameManager.Instance != null)
+        // AÑADIR AQUÍ: Agregar las propiedades del GameManager si se encuentran referencias con #
+        if (scope.Contains("#"))
         {
-            var globals = new Dictionary<string, GameObject>
+            // Buscar el GameManager en la escena
+            GameManager gameManager = GameObject.FindObjectOfType<GameManager>();
+            if (gameManager != null)
             {
-                { "Camera", GameManager.Instance.MainCamera?.gameObject },
-                { "Sun", GameManager.Instance.SunLight?.gameObject }
-            };
+                // Obtener todas las propiedades públicas del GameManager
+                var gameManagerType = typeof(GameManager);
+                var fields = gameManagerType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
-            foreach (var pair in globals)
-            {
-                if (pair.Value == null) continue;
-
-                // Añadir tambien clave simple
-                if (!scopeList.ContainsKey(pair.Key))
-                    scopeList.Add(pair.Key, pair.Value);
-
-                foreach (string p in baseProperties)
+                foreach (var field in fields)
                 {
-                    string fullName = pair.Key + "." + p;
-                    if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                    // Para campos que son Vector2, Vector3, etc., agregamos sus componentes
+                    if (field.FieldType == typeof(Vector2))
                     {
-                        scopeList.Add(fullName, pair.Value);
+                        string[] components = { "x", "y" };
+                        foreach (string comp in components)
+                        {
+                            string fullName = "#" + field.Name + "." + comp;
+                            if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                            {
+                                scopeList.Add(fullName, gameManager.gameObject);
+                            }
+                        }
+                    }
+                    else if (field.FieldType == typeof(Vector3))
+                    {
+                        string[] components = { "x", "y", "z" };
+                        foreach (string comp in components)
+                        {
+                            string fullName = "#" + field.Name + "." + comp;
+                            if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                            {
+                                scopeList.Add(fullName, gameManager.gameObject);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Para otros campos, agregarlos directamente
+                        string fullName = "#" + field.Name;
+                        if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                        {
+                            scopeList.Add(fullName, gameManager.gameObject);
+                        }
+                    }
+                }
+
+                // También procesar propiedades (no solo campos)
+                var properties = gameManagerType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                foreach (var prop in properties)
+                {
+                    if (prop.PropertyType == typeof(Vector2))
+                    {
+                        string[] components = { "x", "y" };
+                        foreach (string comp in components)
+                        {
+                            string fullName = "#" + prop.Name + "." + comp;
+                            if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                            {
+                                scopeList.Add(fullName, gameManager.gameObject);
+                            }
+                        }
+                    }
+                    else if (prop.PropertyType == typeof(Vector3))
+                    {
+                        string[] components = { "x", "y", "z" };
+                        foreach (string comp in components)
+                        {
+                            string fullName = "#" + prop.Name + "." + comp;
+                            if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                            {
+                                scopeList.Add(fullName, gameManager.gameObject);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string fullName = "#" + prop.Name;
+                        if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                        {
+                            scopeList.Add(fullName, gameManager.gameObject);
+                        }
                     }
                 }
             }

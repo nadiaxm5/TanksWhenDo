@@ -5,6 +5,7 @@ public class RedHealth : MonoBehaviour {
     public bool Active = true;
     public float despY=0.05f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("this.x","RedTank.x",scopeList);

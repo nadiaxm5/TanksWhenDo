@@ -6,6 +6,7 @@ public class Shell : MonoBehaviour {
     public float speed=15f;
     public float damage=50f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Move("this.speed","0","this.ry","0",gameObject,scopeList);
@@ -25,7 +26,7 @@ public class Shell : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.speed,0,this.ry,0);Spawn(ShellExplosion, this);Delete(this)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Move(this.speed,0,this.ry,0);Collision(BlueTank);Spawn(ShellExplosion,this);Delete(this);Collision(RedTank);Collision(Obstacle)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

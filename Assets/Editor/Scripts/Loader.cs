@@ -14,15 +14,15 @@ public static class Loader
         SceneJson scene = JsonUtility.FromJson<SceneJson>(json);
         scene.Cast.Reverse();
         var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-        newScene.name = scene.Name;
+        newScene.name = scene.GameName;
 
-        // Eliminar cámara y luz por defecto
+        // Delete default camera and light
         GameObject defaultCamera = GameObject.Find("Main Camera");
         if (defaultCamera != null) Object.DestroyImmediate(defaultCamera);
         GameObject defaultLight = GameObject.Find("Directional Light");
         if (defaultLight != null) Object.DestroyImmediate(defaultLight);
 
-        // Instanciar GameManager desde Prefab
+        // Instanciate GameManager from Prefab
         GameObject gameManagerPrefab = Resources.Load<GameObject>("Prefabs/GameManager");
         if (gameManagerPrefab == null)
         {
@@ -33,35 +33,10 @@ public static class Loader
         GameObject gmInstance = Object.Instantiate(gameManagerPrefab);
         gmInstance.name = "GameManager";
 
-        // Modificar propiedades de la cámara del GameManager
-        Camera cam = gmInstance.GetComponentInChildren<Camera>();
-        if (cam != null && scene.CameraPosition != null)
-            cam.transform.position = new Vector3(scene.CameraPosition[0], scene.CameraPosition[1], scene.CameraPosition[2]);
-
-        if (cam != null && scene.CameraRotation != null)
-            cam.transform.eulerAngles = new Vector3(scene.CameraRotation[0], scene.CameraRotation[1], scene.CameraRotation[2]);
-
-        // Modificar propiedades de la luz del GameManager
-        Light sun = gmInstance.GetComponentInChildren<Light>();
-        if (sun != null && scene.SunPosition != null)
-            sun.transform.position = new Vector3(scene.SunPosition[0], scene.SunPosition[1], scene.SunPosition[2]);
-
-        if (sun != null && scene.SunRotation != null)
-            sun.transform.eulerAngles = new Vector3(scene.SunRotation[0], scene.SunRotation[1], scene.SunRotation[2]);
-
-        if (sun != null && scene.SunColor != null)
-            sun.color = new Color32(scene.SunColor[0], scene.SunColor[1], scene.SunColor[2], 255);
-
-        if (scene.SunAmbientColor != null)
-            RenderSettings.ambientLight = new Color32(scene.SunAmbientColor[0], scene.SunAmbientColor[1], scene.SunAmbientColor[2], 255);
-
-        RenderSettings.ambientMode = AmbientMode.Flat;
-
-        // Load GameObjects
+        // Load
         CreateTags(scene.Cast);
         LoadPrefabs(scene.Cast);
-        LoadScripts(scene.Cast);
-        Debug.Log("Load " + fileName + " finished");
+        LoadScripts(scene);
     }
 
     public static void CreateTags(List<ActorJson> actorList)
@@ -72,6 +47,7 @@ public static class Loader
         tagsProperty.ClearArray();
         tagManager.ApplyModifiedProperties();
         tagManager.Update();
+
         // Create Tags
         List<string> tags = new List<string>() { "Untagged", "Respawn", "Finish", "EditorOnly", "MainCamera", "Player", "GameController" };
         foreach (ActorJson actor in actorList)
@@ -100,23 +76,68 @@ public static class Loader
     {
         foreach (ActorJson actor in actorList)
         {
-            Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Resources/Prefabs/" + actor.Prefab + ".prefab", typeof(GameObject));
+            Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Resources/Prefabs/" + actor.PrefabName + ".prefab", typeof(GameObject));
             GameObject obj = (GameObject)PrefabUtility.InstantiatePrefab((GameObject)prefab);
-            obj.name = actor.Name;
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            Collider col = obj.GetComponent<Collider>();
+
+            obj.name = actor.ActorName;
+
             if (actor.Tag != null) obj.tag = actor.Tag;
             if (actor.Position != null) obj.transform.position = new Vector3(actor.Position[0], actor.Position[1], actor.Position[2]);
             if (actor.Rotation != null) obj.transform.eulerAngles = new Vector3(actor.Rotation[0], actor.Rotation[1], actor.Rotation[2]);
             if (actor.Scale != null) obj.transform.localScale = new Vector3(actor.Scale[0], actor.Scale[1], actor.Scale[2]);
+            if (rb != null)
+            {
+                if (actor.Velocity != null) rb.velocity = new Vector3(actor.Velocity[0], actor.Velocity[1], actor.Velocity[2]);
+                if (actor.AngularVelocity != null) rb.angularVelocity = new Vector3(actor.AngularVelocity[0], actor.AngularVelocity[1], actor.AngularVelocity[2]);
+                if (actor.Density != 0) rb.SetDensity(actor.Density);
+                if (actor.Drag != 0) rb.drag = actor.Drag;
+            }
+            if (col != null)
+            {
+                if (col.material == null) col.material = new PhysicMaterial();
+                if (actor.Friction != 0)
+                {
+                    col.material.dynamicFriction = actor.Friction;
+                    col.material.staticFriction = actor.Friction;
+                }
+                if (actor.Bounciness != 0) col.material.bounciness = actor.Bounciness;
+            }
+
+            if (actor.Size != null)
+            {
+                Renderer rend = obj.GetComponentInChildren<Renderer>();
+                if (rend != null)
+                {
+                    Vector3 originalSize = rend.bounds.size;
+                    originalSize.x = originalSize.x == 0 ? 1 : originalSize.x;
+                    originalSize.y = originalSize.y == 0 ? 1 : originalSize.y;
+                    originalSize.z = originalSize.z == 0 ? 1 : originalSize.z;
+
+                    Vector3 desired = new Vector3(actor.Size[0], actor.Size[1], actor.Size[2]);
+                    Vector3 newScale = new Vector3(desired.x / originalSize.x, desired.y / originalSize.y, desired.z / originalSize.z);
+                    obj.transform.localScale = newScale;
+                }
+            }
         }
         AssetDatabase.Refresh();
     }
 
-    private static void LoadScripts(List<ActorJson> actorList)
+    private static void LoadScripts(SceneJson scene)
     {
-        Scripts.Create(actorList); // Create Scripts
+        if (Directory.Exists("Assets/Resources/Scripts/"))
+            Directory.Delete("Assets/Resources/Scripts/", true);
+        Directory.CreateDirectory("Assets/Resources/Scripts/");
+
+        Scripts.CreateGameManager(scene);
+        Scripts.Create(scene.Cast);
+        AssetDatabase.Refresh();
+
+        // Add scripts to gameObjects
         var scripts = Resources.LoadAll<MonoScript>("Scripts");
         foreach (var script in scripts)
-        { // Add scripts to gameObjects
+        {
             GameObject obj = GameObject.Find(script.name);
             obj.AddComponent(script.GetClass());
         }

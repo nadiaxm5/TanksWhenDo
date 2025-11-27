@@ -47,6 +47,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace B83.LogicExpressionParser
 {
@@ -762,7 +763,6 @@ namespace B83.LogicExpressionParser
         {
             context = new ExpressionContext();
             m_ParsingContext = aParsingContext;
-            AddGlobalReferences(); // Aquí se incluyen los objetos globales automáticamente
         }
 
         private ILogicResult ParseLogicResult(string aExpression, int aMaxRecursion)
@@ -926,6 +926,12 @@ namespace B83.LogicExpressionParser
 
             if (ValidIdentifier(aExpression))
             {
+                // Si es una referencia al GameManager (#)
+                if (aExpression.StartsWith("#"))
+                {
+                    // Convertir a número y luego a booleano (0 = false, !=0 = true)
+                    return new NumberToBool { val = new GameManagerVariable(aExpression.Substring(1)) };
+                }
                 return context.GetVariable(aExpression.Trim());
             }
 
@@ -1053,13 +1059,19 @@ namespace B83.LogicExpressionParser
 
             if (ValidIdentifier(aExpression))
             {
+                // Si es una referencia al GameManager (#)
+                if (aExpression.StartsWith("#"))
+                {
+                    string propertyPath = aExpression.Substring(1);
+                    return new GameManagerVariable(propertyPath);
+                }
                 return context.GetVariable(aExpression.Trim());
             }
 
             if (aMaxRecursion > 0)
                 return new BoolToNumber { val = ParseLogicResult(aExpression, aMaxRecursion) };
             throw new ParseException("Unexpected end / expression");
-        } //ParseNumber(string, int)
+        }
 
         public LogicExpression Parse(string aExpressionString, ExpressionContext aContext = null)
         {
@@ -1094,32 +1106,20 @@ namespace B83.LogicExpressionParser
                 return false;
             if (aExpression.Contains(" "))
                 return false;
-            //if (!"abcdefghijklmnopqrstuvwxyz_".Contains(aExpression.Substring(0, 1).ToLower()))
-            //    return false;
-            // this is better for performance and garbage generation
-            char firstLetter = char.ToLower(aExpression[0]);
-            if (firstLetter != '_' && (firstLetter < 'a' || firstLetter > 'z'))
+
+            // Permitir identificadores que empiezan con #
+            if (aExpression.StartsWith("#"))
+            {
+                if (aExpression.Length < 2)
+                    return false;
+                char firstLetter = char.ToLower(aExpression[1]);
+                return firstLetter == '_' || (firstLetter >= 'a' && firstLetter <= 'z');
+            }
+
+            char firstLetterOriginal = char.ToLower(aExpression[0]);
+            if (firstLetterOriginal != '_' && (firstLetterOriginal < 'a' || firstLetterOriginal > 'z'))
                 return false;
             return true;
-        }
-
-        private void AddGlobalReferences()
-        {
-            if (GameManager.Instance == null) return;
-
-            if (GameManager.Instance.MainCamera != null)
-                ExpressionContext["Camera"].Set(GameManager.Instance.MainCamera.gameObject);
-
-            if (GameManager.Instance.SunLight != null)
-                ExpressionContext["Sun"].Set(GameManager.Instance.SunLight.gameObject);
-
-            ExpressionContext["MouseScreenX"].Set(() => GameManager.Instance.MouseScreenX);
-            ExpressionContext["MouseScreenY"].Set(() => GameManager.Instance.MouseScreenY);
-            ExpressionContext["MouseScreenZ"].Set(() => GameManager.Instance.MouseScreenZ);
-
-            ExpressionContext["MouseWorldX"].Set(() => GameManager.Instance.MouseWorldX);
-            ExpressionContext["MouseWorldY"].Set(() => GameManager.Instance.MouseWorldY);
-            ExpressionContext["MouseWorldZ"].Set(() => GameManager.Instance.MouseWorldZ);
         }
     }
 
@@ -1127,6 +1127,118 @@ namespace B83.LogicExpressionParser
     {
         public ParseException(string aMessage) : base(aMessage)
         {
+        }
+    }
+
+    public class GameManagerVariable : INumberProvider
+    {
+        private string m_PropertyPath;
+
+        public GameManagerVariable(string propertyPath)
+        {
+            m_PropertyPath = propertyPath;
+        }
+
+        public double GetNumber()
+        {
+            // Primero verificar que GameManager existe
+            Type gameManagerType = Type.GetType("GameManager");
+            if (gameManagerType == null)
+            {
+                UnityEngine.Debug.LogError("GameManager class not found");
+                return 0;
+            }
+
+            // Obtener la propiedad estática Instance
+            var instanceProperty = gameManagerType.GetProperty("Instance");
+            if (instanceProperty == null)
+            {
+                UnityEngine.Debug.LogError("GameManager.Instance property not found");
+                return 0;
+            }
+
+            object gameManagerInstance = instanceProperty.GetValue(null);
+            if (gameManagerInstance == null)
+            {
+                UnityEngine.Debug.LogError("GameManager instance is null");
+                return 0;
+            }
+
+            object currentValue = gameManagerInstance;
+            string[] parts = m_PropertyPath.Split('.');
+
+            foreach (string part in parts)
+            {
+                var field = currentValue.GetType().GetField(part);
+                if (field != null)
+                {
+                    currentValue = field.GetValue(currentValue);
+                }
+                else
+                {
+                    var property = currentValue.GetType().GetProperty(part);
+                    if (property != null)
+                    {
+                        currentValue = property.GetValue(currentValue);
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.LogError($"Property '{part}' not found in GameManager");
+                        return 0;
+                    }
+                }
+
+                if (currentValue == null)
+                {
+                    UnityEngine.Debug.LogError($"Property '{part}' returned null in GameManager");
+                    return 0;
+                }
+            }
+
+            // Convertir a double según el tipo
+            if (currentValue is float f) return f;
+            if (currentValue is int i) return i;
+            if (currentValue is double d) return d;
+
+            // Para Vector2 y Vector3 necesitamos usar reflexión también
+            if (currentValue.GetType().Name == "Vector2")
+            {
+                var xField = currentValue.GetType().GetField("x");
+                var yField = currentValue.GetType().GetField("y");
+
+                if (m_PropertyPath.EndsWith(".x") && xField != null)
+                    return Convert.ToDouble(xField.GetValue(currentValue));
+                if (m_PropertyPath.EndsWith(".y") && yField != null)
+                    return Convert.ToDouble(yField.GetValue(currentValue));
+
+                // Calcular magnitud como fallback
+                double x = Convert.ToDouble(xField.GetValue(currentValue));
+                double y = Convert.ToDouble(yField.GetValue(currentValue));
+                return Math.Sqrt(x * x + y * y);
+            }
+
+            if (currentValue.GetType().Name == "Vector3")
+            {
+                var xField = currentValue.GetType().GetField("x");
+                var yField = currentValue.GetType().GetField("y");
+                var zField = currentValue.GetType().GetField("z");
+
+                if (m_PropertyPath.EndsWith(".x") && xField != null)
+                    return Convert.ToDouble(xField.GetValue(currentValue));
+                if (m_PropertyPath.EndsWith(".y") && yField != null)
+                    return Convert.ToDouble(yField.GetValue(currentValue));
+                if (m_PropertyPath.EndsWith(".z") && zField != null)
+                    return Convert.ToDouble(zField.GetValue(currentValue));
+
+                // Calcular magnitud como fallback
+                double x = Convert.ToDouble(xField.GetValue(currentValue));
+                double y = Convert.ToDouble(yField.GetValue(currentValue));
+                double z = Convert.ToDouble(zField.GetValue(currentValue));
+                return Math.Sqrt(x * x + y * y + z * z);
+            }
+
+            UnityEngine.Debug.LogError($"Unsupported GameManager property type: {currentValue.GetType()}");
+            return 0;
         }
     }
 }

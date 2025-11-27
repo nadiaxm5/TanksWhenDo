@@ -5,6 +5,7 @@ public class RedWin : MonoBehaviour {
     public bool Active = false;
     public float counter=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("this.counter","this.counter+1",scopeList);

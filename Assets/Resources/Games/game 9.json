@@ -1,5 +1,5 @@
 {
-    "GameName": "TANKS",
+    "Name": "TANKS",
     "CameraPosition": [-12, 20, 5],
     "CameraRotation": [50, 60, 0],
     "SunPosition": [0, 10, 0],
@@ -8,13 +8,13 @@
     "SunAmbientColor": [180, 180, 180],
     "Cast": [
         {
-            "ActorName": "LevelArt",
-            "PrefabName": "LevelArt",
+            "Name": "LevelArt",
+            "Prefab": "LevelArt",
             "Tag":"Obstacle"
         },
         {
-            "ActorName": "BlueTank",
-            "PrefabName": "BlueTank",
+            "Name": "BlueTank",
+            "Prefab": "BlueTank",
             "Tag":"BlueTank",
             "Position": [-3.0, 0.0, 30.0],
             "Rotation": [0.0, 180.0, 0.0],
@@ -59,8 +59,8 @@
             ]
         },
         {
-            "ActorName": "RedTank",
-            "PrefabName": "RedTank",
+            "Name": "RedTank",
+            "Prefab": "RedTank",
             "Tag":"RedTank",
             "Position": [13.0, 0.0, -5.0],
             "Rotation": [0.0, 0.0, 0.0],
@@ -105,8 +105,8 @@
             ]
         },
         {
-            "ActorName": "Shell",
-            "PrefabName": "Shell",
+            "Name": "Shell",
+            "Prefab": "Shell",
             "Tag":"Shell",
             "Active": false,
             "Properties": ["speed=15", "damage=50"],
@@ -116,21 +116,21 @@
                 },
                 {
                     "When": ["Collision(BlueTank)"],
-                    "Do": ["Spawn(ShellExplosion,this)", "Delete(this)"]
+                    "Do": ["Spawn(ShellExplosion, this)", "Delete(this)"]
                 },
                 {
                     "When": ["Collision(RedTank)"],
-                    "Do": ["Spawn(ShellExplosion,this)", "Delete(this)"]
+                    "Do": ["Spawn(ShellExplosion, this)", "Delete(this)"]
                 },
                 {
                     "When": ["Collision(Obstacle)"],
-                    "Do": ["Spawn(ShellExplosion,this)", "Delete(this)"]
+                    "Do": ["Spawn(ShellExplosion, this)", "Delete(this)"]
                 }
             ]
         },
         {
-            "ActorName": "ShellExplosion",
-            "PrefabName": "ShellExplosion",
+            "Name": "ShellExplosion",
+            "Prefab": "ShellExplosion",
             "Active": false,
             "Properties": ["counter=20"],
             "Script": [
@@ -144,8 +144,8 @@
             ]
         },
         {
-            "ActorName": "BlueAim",
-            "PrefabName": "BlueAim",
+            "Name": "BlueAim",
+            "Prefab": "BlueAim",
             "Script": [
                 {
                     "Do": ["Edit(this.x,BlueTank.x)", "Edit(this.y,BlueTank.y)", "Edit(this.z,BlueTank.z)", "Edit(this.ry,BlueTank.ry)", "Edit(this.value,BlueTank.currentAim)"]
@@ -153,8 +153,8 @@
             ]
         },
         {
-            "ActorName": "RedAim",
-            "PrefabName": "RedAim",
+            "Name": "RedAim",
+            "Prefab": "RedAim",
             "Script": [
                 {
                     "Do": ["Edit(this.x,RedTank.x)", "Edit(this.y,RedTank.y)", "Edit(this.z,RedTank.z)", "Edit(this.ry,RedTank.ry)", "Edit(this.value,RedTank.currentAim)"]
@@ -162,8 +162,8 @@
             ]
         },
         {
-            "ActorName": "RedHealth",
-            "PrefabName": "RedHealth",
+            "Name": "RedHealth",
+            "Prefab": "RedHealth",
             "Properties": ["despY=0.05"],
             "Script": [
                 {
@@ -172,8 +172,8 @@
             ]
         },
         {
-            "ActorName": "BlueHealth",
-            "PrefabName": "BlueHealth",
+            "Name": "BlueHealth",
+            "Prefab": "BlueHealth",
             "Properties": ["despY=0.05"],
             "Script": [
                 {
@@ -182,8 +182,8 @@
             ]
         },
         {
-            "ActorName": "BlueWin",
-            "PrefabName": "BlueWin",
+            "Name": "BlueWin",
+            "Prefab": "BlueWin",
             "Active": false,
             "Properties":["counter=0"],
             "Script": [
@@ -197,8 +197,8 @@
             ]
         },
         {
-            "ActorName": "RedWin",
-            "PrefabName": "RedWin",
+            "Name": "RedWin",
+            "Prefab": "RedWin",
             "Active": false,
             "Properties":["counter=0"],
             "Script": [
@@ -212,15 +212,15 @@
             ]
         },
         {
-            "ActorName":"CameraManager",
-            "PrefabName":"CameraManager",
+            "Name":"CameraManager",
+            "Prefab":"CameraManager",
             "Properties":["despX=15", "despY=15", "despZ=10"],
             "Script": [
                 {
                     "Do":[
-                            "Edit(#CameraPosition.x,(BlueTank.x+RedTank.x)/2 - this.despX)",
-                            "Edit(#CameraPosition.y,this.despY + (abs(BlueTank.x-RedTank.x)+abs(BlueTank.z-RedTank.z))/3)",
-                            "Edit(#CameraPosition.z,(BlueTank.z+RedTank.z)/2 - this.despZ)"
+                            "Edit(Camera.x,(BlueTank.x+RedTank.x)/2 - this.despX)",
+                            "Edit(Camera.y,this.despY + (abs(BlueTank.x-RedTank.x)+abs(BlueTank.z-RedTank.z))/3)",
+                            "Edit(Camera.z,(BlueTank.z+RedTank.z)/2 - this.despZ)"
                     ]
                 }
             ]

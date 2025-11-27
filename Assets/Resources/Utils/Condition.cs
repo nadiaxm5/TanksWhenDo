@@ -50,14 +50,67 @@ public static class Condition
         return false;
     }
 
-    public static bool Touch(string type)
+    public static bool Touch(string type, string onActor, GameObject obj)
     {
+        // If on actor is false
+        if (onActor.Contains("false"))
+        {
+            switch (type)
+            {
+                case "press": return Input.GetMouseButton(0);
+                case "down": return Input.GetMouseButtonDown(0);
+                case "up": return Input.GetMouseButtonUp(0);
+                case "tap":
+                    return Input.GetMouseButtonUp(0) && !Input.GetMouseButton(0);
+
+                case "isOver": return false;
+            }
+            return false;
+        }
+
+        // If on actor is true
+        bool isOverActor =
+            Physics.Raycast(
+                Camera.main.ScreenPointToRay(Input.mousePosition),
+                out RaycastHit hit
+            ) && hit.collider.gameObject == obj;
+
         switch (type)
         {
-            case "press": return Input.GetMouseButton(0);
-            case "down": return Input.GetMouseButtonDown(0);
-            case "up": return Input.GetMouseButtonUp(0);
-            default: return false;
+            case "isOver": return isOverActor;
+            case "press": return isOverActor && Input.GetMouseButton(0);
+            case "down": return isOverActor && Input.GetMouseButtonDown(0);
+            case "up": return isOverActor && Input.GetMouseButtonUp(0);
+            case "tap": return isOverActor && Input.GetMouseButtonUp(0) && !Input.GetMouseButton(0);
         }
+        return false;
+    }
+
+    public static bool Timer(string secondsString, GameObject obj)
+    {
+        float seconds = float.Parse(secondsString, System.Globalization.CultureInfo.InvariantCulture);
+
+        var script = obj.GetComponent<MonoBehaviour>();
+        var field = script.GetType().GetField("timers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field == null)
+            return false;
+
+        var timers = field.GetValue(script) as Dictionary<string, float>;
+        if (timers == null)
+            return false;
+
+        string key = "timer_" + secondsString;
+
+        float lastTime = 0f;
+        if (timers.ContainsKey(key))
+            lastTime = timers[key];
+
+        if (UnityEngine.Time.time - lastTime >= seconds)
+        {
+            timers[key] = UnityEngine.Time.time;
+            return true;
+        }
+
+        return false;
     }
 }

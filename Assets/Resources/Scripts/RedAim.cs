@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class RedAim : MonoBehaviour {
     public bool Active = true;
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("this.x","RedTank.x",scopeList);
