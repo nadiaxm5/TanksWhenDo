@@ -271,7 +271,7 @@ public static class Action
         Vector3 forceVector = direction * force;
         Rigidbody rb = obj.GetComponent<Rigidbody>();
 
-        if (rb != null) rb.AddForce(forceVector, ForceMode.Force); // F = m·a
+        if (rb != null) rb.AddForce(forceVector, ForceMode.Force);
         else obj.transform.position += forceVector * Time.deltaTime;
     }
 
