@@ -3,26 +3,20 @@ using System.Collections.Generic;
 
 public class ShellExplosion : MonoBehaviour {
     public bool Active = false;
-    public float counter=20f;
-    public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-            Action.Edit("this.counter","this.counter-1",scopeList);
             Action.PlayParticles("ShellExplosion",gameObject);
             Action.PlaySound("ShellExplosion",gameObject);
         }
-        if(Condition.Compare("this.counter<0",scopeList)){
+        if(Condition.Timer("0.5",gameObject)){
             Action.Delete(gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.counter,this.counter-1);PlayParticles(ShellExplosion);PlaySound(ShellExplosion);Compare(this.counter<0);Delete(this)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"PlayParticles(ShellExplosion);PlaySound(ShellExplosion);Timer(0.5);Delete(this)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
-    }
-    void Awake() {
-        propertyList = Utils.CreateProperties("counter=20");
     }
 }

@@ -18,10 +18,6 @@
             "Tag":"BlueTank",
             "Position": [-3.0, 0.0, 30.0],
             "Rotation": [0.0, 180.0, 0.0],
-            "Drag": 0.2,
-            "Friction": 0.6,
-            "Velocity": [10.0, 0.0, 10.0],
-            "AngularVelocity": [0.0, 90.0, 0.0],
             "Properties": ["speed=10", "angularSpeed=90", "health=100", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
             "Script": [
                 {
@@ -42,7 +38,7 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["Edit(this.health,this.health-Shell.damage)", "PushTo(-300,RedTank.x,RedTank.y,RedTank.z)"]
+                    "Do": ["Edit(this.health,this.health-Shell.damage)"]
                 },
                 {
                     "When": ["Compare(this.health<=0)"],
@@ -68,8 +64,6 @@
             "Tag":"RedTank",
             "Position": [13.0, 0.0, -5.0],
             "Rotation": [0.0, 0.0, 0.0],
-            "Drag": 0.2,
-            "Friction": 0.6,
             "Properties": ["speed=10", "angularSpeed=90", "health=100", "despY=1.7", "despZ=1.35", "maxAim=200", "currentAim=0"],
             "Script": [
                 {
@@ -90,7 +84,7 @@
                 },
                 {
                     "When": ["Collision(Shell)"],
-                    "Do": ["Edit(this.health,this.health-Shell.damage)", "PushTo(-300,BlueTank.x,BlueTank.y,BlueTank.z)"]
+                    "Do": ["Edit(this.health,this.health-Shell.damage)"]
                 },
                 {
                     "When": ["Compare(this.health<=0)"],
@@ -138,12 +132,13 @@
             "ActorName": "ShellExplosion",
             "PrefabName": "ShellExplosion",
             "Active": false,
+            "Properties": ["counter=20"],
             "Script": [
                 {
-                    "Do": ["PlayParticles(ShellExplosion)", "PlaySound(ShellExplosion)"]
+                    "Do": ["Edit(this.counter,this.counter-1)", "PlayParticles(ShellExplosion)", "PlaySound(ShellExplosion)"]
                 },
                 {
-                    "When": ["Timer(0.5)"],
+                    "When": ["Compare(this.counter<0)"],
                     "Do": ["Delete(this)"]
                 }
             ]
@@ -190,9 +185,13 @@
             "ActorName": "BlueWin",
             "PrefabName": "BlueWin",
             "Active": false,
+            "Properties":["counter=0"],
             "Script": [
                 {
-                    "When":["Timer(1)"],
+                    "Do":["Edit(this.counter,this.counter+1)"]
+                },
+                {
+                    "When":["Compare(this.counter==150)"],
                     "Do":["LoadScene()"]
                 }
             ]
@@ -201,9 +200,13 @@
             "ActorName": "RedWin",
             "PrefabName": "RedWin",
             "Active": false,
+            "Properties":["counter=0"],
             "Script": [
                 {
-                    "When":["Timer(1)"],
+                    "Do":["Edit(this.counter,this.counter+1)"]
+                },
+                {
+                    "When":["Compare(this.counter==150)"],
                     "Do":["LoadScene()"]
                 }
             ]
