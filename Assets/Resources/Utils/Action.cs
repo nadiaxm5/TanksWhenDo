@@ -272,7 +272,7 @@ public static class Action
         Rigidbody rb = obj.GetComponent<Rigidbody>();
 
         if (rb != null) rb.AddForce(forceVector, ForceMode.Force);
-        else obj.transform.position += forceVector * Time.deltaTime;
+        else obj.transform.position += forceVector * 0.02f;
     }
 
     public static void PushTo(string forceExp, string xExp, string yExp, string zExp, GameObject obj, Dictionary<string, GameObject> scopeList)
