@@ -39,11 +39,11 @@ public class RedTank : MonoBehaviour {
         if(Condition.Keyboard("DownArrow","press")){
             Action.Move("this.speed","0","this.ry+180","0",gameObject,scopeList);
         }
-        if(Condition.Keyboard("Return","press")){
+        if(Condition.Keyboard("Enter","press")){
             Action.Edit("this.currentAim","this.currentAim+1",scopeList);
             Action.PlaySound("ShotCharging",gameObject);
         }
-        if(Condition.Keyboard("Return","up")){
+        if(Condition.Keyboard("Enter","up")){
             Action.Spawn("Shell", gameObject, "0", "this.offsetY", "this.offsetZ", "0", "0", "0", scopeList);
             Action.Edit("this.currentAim","0",scopeList);
             Action.PlaySound("ShotFiring",gameObject);
@@ -51,7 +51,7 @@ public class RedTank : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Collision(Shell);Edit(this.health,this.health-Shell.damage);PushTo(-300,BlueTank.x,BlueTank.y,BlueTank.z);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Return,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Return,up);Spawn(Shell,this,0,this.offsetY,this.offsetZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Collision(Shell);Edit(this.health,this.health-Shell.damage);PushTo(-300,BlueTank.x,BlueTank.y,BlueTank.z);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Enter,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Enter,up);Spawn(Shell,this,0,this.offsetY,this.offsetZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

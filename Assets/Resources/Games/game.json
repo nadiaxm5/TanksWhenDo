@@ -97,7 +97,7 @@
                     "Do": ["Edit(BlueWin.Active,1)"]
                 },
                 {
-                    "When": ["Keyboard(Return,press)"],
+                    "When": ["Keyboard(Enter,press)"],
                     "Do": ["Edit(this.currentAim,this.currentAim+1)", "PlaySound(ShotCharging)"]
                 },
                 {
@@ -105,7 +105,7 @@
                     "Do": ["Edit(this.currentAim,this.maxAim)"]
                 },
                 {
-                    "When": ["Keyboard(Return,up)"],
+                    "When": ["Keyboard(Enter,up)"],
                     "Do": ["Spawn(Shell,this,0,this.offsetY,this.offsetZ)", "Edit(this.currentAim,0)", "PlaySound(ShotFiring)"]
                 }
             ]
