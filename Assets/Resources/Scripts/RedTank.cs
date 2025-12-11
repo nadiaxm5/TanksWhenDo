@@ -6,8 +6,8 @@ public class RedTank : MonoBehaviour {
     public float speed=10f;
     public float angularSpeed=90f;
     public float health=100f;
-    public float despY=1.7f;
-    public float despZ=1.35f;
+    public float offsetY=1.7f;
+    public float offsetZ=1.35f;
     public float maxAim=200f;
     public float currentAim=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
@@ -44,14 +44,14 @@ public class RedTank : MonoBehaviour {
             Action.PlaySound("ShotCharging",gameObject);
         }
         if(Condition.Keyboard("Return","up")){
-            Action.Spawn("Shell", gameObject, "0", "this.despY", "this.despZ", "0", "0", "0", scopeList);
+            Action.Spawn("Shell", gameObject, "0", "this.offsetY", "this.offsetZ", "0", "0", "0", scopeList);
             Action.Edit("this.currentAim","0",scopeList);
             Action.PlaySound("ShotFiring",gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Collision(Shell);Edit(this.health,this.health-Shell.damage);PushTo(-300,BlueTank.x,BlueTank.y,BlueTank.z);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Return,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Return,up);Spawn(Shell,this,0,this.despY,this.despZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Collision(Shell);Edit(this.health,this.health-Shell.damage);PushTo(-300,BlueTank.x,BlueTank.y,BlueTank.z);Compare(this.health<=0);Edit(BlueWin.Active,1);Compare(this.currentAim>=this.maxAim);Edit(this.currentAim,this.maxAim);Keyboard(RightArrow,press);Rotate(this.angularSpeed,this.rx,this.ry,this.rz);PlayParticles(DustTrail);Keyboard(LeftArrow,press);Rotate(-this.angularSpeed,this.rx,this.ry,this.rz);Keyboard(UpArrow,press);Move(this.speed,0,this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,this.ry+180,0);Keyboard(Return,press);Edit(this.currentAim,this.currentAim+1);PlaySound(ShotCharging);Keyboard(Return,up);Spawn(Shell,this,0,this.offsetY,this.offsetZ);Edit(this.currentAim,0);PlaySound(ShotFiring)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
@@ -65,7 +65,7 @@ public class RedTank : MonoBehaviour {
             TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("speed=10;angularSpeed=90;health=100;despY=1.7;despZ=1.35;maxAim=200;currentAim=0");
+        propertyList = Utils.CreateProperties("speed=10;angularSpeed=90;health=100;offsetY=1.7;offsetZ=1.35;maxAim=200;currentAim=0");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 public class RedHealth : MonoBehaviour {
     public bool Active = true;
-    public float despY=0.05f;
+    public float offsetY=0.05f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("this.x","RedTank.x",scopeList);
-            Action.Edit("this.y","RedTank.y+this.despY",scopeList);
+            Action.Edit("this.y","RedTank.y+this.offsetY",scopeList);
             Action.Edit("this.z","RedTank.z",scopeList);
             Action.Edit("this.ry","RedTank.ry",scopeList);
             Action.Edit("this.value","RedTank.health",scopeList);
@@ -17,11 +17,11 @@ public class RedHealth : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.x,RedTank.x);Edit(this.y,RedTank.y+this.despY);Edit(this.z,RedTank.z);Edit(this.ry,RedTank.ry);Edit(this.value,RedTank.health)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.x,RedTank.x);Edit(this.y,RedTank.y+this.offsetY);Edit(this.z,RedTank.z);Edit(this.ry,RedTank.ry);Edit(this.value,RedTank.health)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("despY=0.05");
+        propertyList = Utils.CreateProperties("offsetY=0.05");
     }
 }

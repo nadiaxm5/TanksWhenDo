@@ -391,7 +391,7 @@ public static class Utils
 
         if (scope.Contains("#"))
         {
-            GameManager gameManager = GameObject.FindObjectOfType<GameManager>();
+            GameManager gameManager = GameObject.FindFirstObjectByType<GameManager>();
             if (gameManager != null)
             {
                 var gameManagerType = typeof(GameManager);
